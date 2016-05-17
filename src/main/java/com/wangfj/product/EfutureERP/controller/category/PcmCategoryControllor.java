@@ -120,6 +120,7 @@ public class PcmCategoryControllor extends BaseController {
 					exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_CATEGORY.getStatus());
 					exceptionLogdto.setErrorMessage(ErrorCode.SHOP_NULL.getErrorCode()
 							+ ErrorCode.SHOP_NULL.getMemo());
+					exceptionLogdto.setErrorCode(ErrorCode.SHOP_NULL.getErrorCode());
 					exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
 					throw new BleException(ErrorCode.SHOP_NULL.getErrorCode(),
 							ErrorCode.SHOP_NULL.getMemo());
@@ -132,6 +133,7 @@ public class PcmCategoryControllor extends BaseController {
 					exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_CATEGORY.getStatus());
 					exceptionLogdto.setErrorMessage(ErrorCode.DATA_OPER_ERROR.getErrorCode()
 							+ ErrorCode.DATA_OPER_ERROR.getMemo());
+					exceptionLogdto.setErrorCode(ErrorCode.DATA_OPER_ERROR.getErrorCode());
 					exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
 					throw new BleException(ErrorCode.DATA_OPER_ERROR.getErrorCode(),
 							ErrorCode.DATA_OPER_ERROR.getMemo());
@@ -194,6 +196,7 @@ public class PcmCategoryControllor extends BaseController {
 					exceptionLogdto.setInterfaceName("findIndustryCategoryFromPCM");
 					exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_CATEGORY.getStatus());
 					exceptionLogdto.setErrorMessage("第" + (i + 1) + "条错误:" + e.getMessage());
+					exceptionLogdto.setErrorCode(e.getCode());
 					exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
 					// return ResultUtil.creComErrorResult(e.getCode(),
 					// e.getMessage());
@@ -287,7 +290,7 @@ public class PcmCategoryControllor extends BaseController {
 			exceptionLogdto.setDataContent(tongjicate.toString());
 			exceptionLogdto.setErrorMessage(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD
 					.getMemo());
-
+			exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD.getErrorCode());
 			exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
 			return ResultUtil.creComErrorResult(
 					ComErrorCodeConstants.ErrorCode.DATA_OPER_ERROR.getErrorCode(), s);

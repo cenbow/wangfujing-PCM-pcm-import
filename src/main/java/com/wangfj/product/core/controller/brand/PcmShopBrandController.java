@@ -1,6 +1,8 @@
 package com.wangfj.product.core.controller.brand;
 
+import com.wangfj.core.constants.ComErrorCodeConstants;
 import com.wangfj.core.framework.base.controller.BaseController;
+import com.wangfj.core.framework.exception.BleException;
 import com.wangfj.core.utils.HttpUtil;
 import com.wangfj.core.utils.JsonUtil;
 import com.wangfj.core.utils.PropertyUtil;
@@ -92,20 +94,39 @@ public class PcmShopBrandController extends BaseController {
                         e.printStackTrace();
                     }
 
-                    Map<String, Object> resultMap = shopBrandRelationService.uploadBrand(dto);
-                    String result = resultMap.get("result") + "";
+                    Map<String, Object> resultMap = null;
+                    PcmExceptionLogDto exceptionLogdto = null;
+                    try {
+                        resultMap = shopBrandRelationService.uploadBrand(dto);
+                        if (resultMap != null) {
+                            exceptionLogdto = new PcmExceptionLogDto();
+                            String result = resultMap.get("result") + "";
+                            if (result.equals(Constants.PUBLIC_0 + "")) {
+                                String dataContent = "门店品牌上传时数据:" + dto.toString() + "时失败；异常信息：操作数据库失败";
 
-                    if (result.equals(Constants.PUBLIC_0 + "")) {
-                        requestMsg = "门店品牌上传时数据:" + dto.toString() + "时失败";
-                        String dataContent = "门店品牌上传时数据:" + dto.toString() + "时失败";
+                                exceptionLogdto.setInterfaceName("uploadShopBrand");
+                                exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_BRAND.getStatus());
+                                exceptionLogdto.setDataContent(paraDest.toString());
+                                exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.BRAND_EXIST.getErrorCode());
+                                exceptionLogdto.setErrorMessage(dataContent);
 
-                        PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
-                        exceptionLogdto.setInterfaceName("uploadShopBrand");
-                        exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_BRAND.getStatus());
-                        exceptionLogdto.setDataContent(paraDest.toString());
-                        exceptionLogdto.setErrorMessage(dataContent);
+                                exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
+                            }
+                        }
+                    } catch (BleException ble) {
+                        if (resultMap == null) {
+                            requestMsg = "门店品牌上传时数据:" + dto.toString() + "时失败";
+                            String dataContent = "门店品牌上传时数据:" + dto.toString() + "时失败；异常信息：" + ble.getMessage();
 
-                        exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
+                            exceptionLogdto = new PcmExceptionLogDto();
+                            exceptionLogdto.setInterfaceName("uploadShopBrand");
+                            exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_BRAND.getStatus());
+                            exceptionLogdto.setDataContent(paraDest.toString());
+                            exceptionLogdto.setErrorCode(ble.getCode());
+                            exceptionLogdto.setErrorMessage(dataContent);
+
+                            exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
+                        }
                     }
                 }
             }
@@ -159,45 +180,55 @@ public class PcmShopBrandController extends BaseController {
                         e.printStackTrace();
                     }
 
-                    Map<String, Object> resultMap = shopBrandRelationService
-                            .uploadShopBrandRelation(dto);
-                    String result = resultMap.get("result") + "";
+                    try {
+                        Map<String, Object> resultMap = shopBrandRelationService.uploadShopBrandRelation(dto);
+                        String result = resultMap.get("result") + "";
 
-                    if (result.toString().equals(Constants.PUBLIC_0 + "")) {
-                        requestMsg = "门店与门店品牌关系上传时数据:" + dto.toString() + "时失败";
-                        String dataContent = "门店与门店品牌关系上传时数据:" + dto.toString() + "时失败";
+                        if (result.toString().equals(Constants.PUBLIC_0 + "")) {
+                            String dataContent = "门店与门店品牌关系上传时数据:" + dto.toString() + "时失败;异常信息：操作数据库失败";
+
+                            PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
+                            exceptionLogdto.setInterfaceName("uploadShopBrandRelation");
+                            exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_BRAND.getStatus());
+                            exceptionLogdto.setDataContent(paraDest.toString());
+                            exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.BRAND_SHOP_RELATION_EXISTENCE.getErrorCode());
+                            exceptionLogdto.setErrorMessage(dataContent);
+
+                            exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
+                        }
+
+                        // 下发给线下搜索
+                        if (result.toString().equals(Constants.PUBLIC_1 + "")) {
+                            final String sid = resultMap.get("sid") + "";
+                            if (StringUtils.isNotEmpty(sid)) {
+                                taskExecutor.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<Map<String, Object>> pushList = new ArrayList<Map<String, Object>>();
+                                        Map<String, Object> paraMap = new HashMap<String, Object>();
+                                        paraMap.put("sid", sid);
+                                        pushList.add(paraMap);
+                                        String json = JsonUtil.getJSONString(pushList);
+                                        String offlineSearchUrl = PropertyUtil.getSystemUrl("pcm-syn")
+                                                + "pcmSynBrand/pushBrandToOfflineSearch.htm";
+                                        HttpUtil.doPost(offlineSearchUrl, json);
+                                    }
+                                });
+                            }
+                        }
+                    } catch (BleException ble) {
+                        String dataContent = "门店与门店品牌关系上传时数据:" + dto.toString() + "时失败;异常信息：" + ble.getMessage();
 
                         PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
                         exceptionLogdto.setInterfaceName("uploadShopBrandRelation");
                         exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_BRAND.getStatus());
                         exceptionLogdto.setDataContent(paraDest.toString());
+                        exceptionLogdto.setErrorCode(ble.getCode());
                         exceptionLogdto.setErrorMessage(dataContent);
 
                         exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
                     }
-
-                    // 下发给线下搜索
-                    if (result.toString().equals(Constants.PUBLIC_1 + "")) {
-                        final String sid = resultMap.get("sid") + "";
-                        if (StringUtils.isNotEmpty(sid)) {
-                            taskExecutor.execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    List<Map<String, Object>> pushList = new ArrayList<Map<String, Object>>();
-                                    Map<String, Object> paraMap = new HashMap<String, Object>();
-                                    paraMap.put("sid", sid);
-                                    pushList.add(paraMap);
-                                    String json = JsonUtil.getJSONString(pushList);
-                                    String offlineSearchUrl = PropertyUtil.getSystemUrl("pcm-syn")
-                                            + "pcmSynBrand/pushBrandToOfflineSearch.htm";
-                                    HttpUtil.doPost(offlineSearchUrl, json);
-                                }
-                            });
-                        }
-                    }
-
                 }
-
             }
         });
 
@@ -252,30 +283,43 @@ public class PcmShopBrandController extends BaseController {
 
                     PcmShopBrandUploadDto dto = transformParaToDto(uploadPara);
 
-                    Map<String, Object> resultMap = shopBrandRelationService
-                            .uploadShopBrandInfo(dto);
+                    try {
+                        Map<String, Object> resultMap = shopBrandRelationService.uploadShopBrandInfo(dto);
 
-                    String result = resultMap.get("result") + "";
+                        String result = resultMap.get("result") + "";
 
-                    if (result.equals(Constants.PUBLIC_0 + "")) {
-                        requestMsg = "门店与门店品牌信息上传时数据:" + dto.toString() + "时失败";
-                        String dataContent = "门店与门店品牌信息上传时数据:" + dto.toString() + "时失败";
+                        if (result.equals(Constants.PUBLIC_0 + "")) {
+                            requestMsg = "门店与门店品牌信息上传时数据:" + dto.toString() + "时失败";
+                            String dataContent = "门店与门店品牌信息上传时数据:" + dto.toString() + "时失败;异常信息：操作数据库失败";
+
+                            PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
+                            exceptionLogdto.setInterfaceName("uploadShopBrandRelationFromEBusiness");
+                            exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_BRAND.getStatus());
+                            exceptionLogdto.setDataContent(paraDest.toString());
+                            exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.BRAND_SHOP_RELATION_EXISTENCE.getErrorCode());
+                            exceptionLogdto.setErrorMessage(dataContent);
+
+                            exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
+                        }
+                        if (result.equals(Constants.PUBLIC_1 + "")) {
+                            Map<String, Object> paraMap = new HashMap<String, Object>();
+                            paraMap.put("sid", resultMap.get("sid"));
+                            paraMap.put("actionCode", dto.getACT_CODE());
+                            paraList.add(paraMap);
+                        }
+
+                    }catch (BleException ble){
+                        String dataContent = "门店与门店品牌信息上传时数据:" + dto.toString() + "时失败;异常信息：" + ble.getMessage();
 
                         PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
                         exceptionLogdto.setInterfaceName("uploadShopBrandRelationFromEBusiness");
                         exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_BRAND.getStatus());
                         exceptionLogdto.setDataContent(paraDest.toString());
+                        exceptionLogdto.setErrorCode(ble.getCode());
                         exceptionLogdto.setErrorMessage(dataContent);
 
                         exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
                     }
-                    if (result.equals(Constants.PUBLIC_1 + "")) {
-                        Map<String, Object> paraMap = new HashMap<String, Object>();
-                        paraMap.put("sid", resultMap.get("sid"));
-                        paraMap.put("actionCode", dto.getACT_CODE());
-                        paraList.add(paraMap);
-                    }
-
                 }
 
                 if (!paraList.isEmpty()) {

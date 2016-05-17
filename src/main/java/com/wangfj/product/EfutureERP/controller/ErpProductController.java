@@ -176,10 +176,6 @@ public class ErpProductController extends BaseController {
 								}
 							}
 						} catch (BleException e) {
-							if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
-								ThrowExcetpionUtil.splitExcetpion(new BleException(e.getCode(), e
-										.getMessage()));
-							}
 							excepList.add(pcmDto.getStoreCode() + "-" + pcmDto.getProductCode()
 									+ "--导入失败,错误:" + e.toString());
 						}
@@ -368,7 +364,8 @@ public class ErpProductController extends BaseController {
 				JSONObject jsono = JSONObject.fromObject(para.getData());
 				JSONArray jsona = JSONArray.fromObject(jsono.get("data"));
 				List<ErpChangePara> data = JSONArray.toList(jsona);
-//				List<Map<String, Object>> excepList = new ArrayList<Map<String, Object>>();
+				// List<Map<String, Object>> excepList = new
+				// ArrayList<Map<String, Object>>();
 				Map<String, Object> map = new HashMap<String, Object>();
 				for (int i = 0; i < data.size(); i++) {
 					ErpChangeDto dto = new ErpChangeDto();
@@ -381,12 +378,9 @@ public class ErpProductController extends BaseController {
 					try {
 						Integer result = erpProductService.modifyErpChangeFromEFutureForBill(dto);
 					} catch (BleException e) {
-						if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
-							ThrowExcetpionUtil.splitExcetpion(new BleException(e.getCode(), e
-									.getMessage()));
-						}
 						map.put("单据号:" + dto.getSEQNO() + ",行号:" + dto.getROWNO(), e.getMessage());
-//						excepList.add(map);
+						map.put("errorCode", e.getCode());
+						// excepList.add(map);
 					}
 					// } else {
 					// map.put("单据号:" + dto.getSEQNO() + ",行号:" +
@@ -401,6 +395,7 @@ public class ErpProductController extends BaseController {
 					pcmExceptionLogDto.setExceptionType(StatusCode.EXCEPTION_PRODUCT.getStatus());
 					pcmExceptionLogDto.setErrorMessage(JsonUtil.getJSONString(map));
 					pcmExceptionLogDto.setDataContent(JsonUtil.getJSONString(para));
+					pcmExceptionLogDto.setErrorCode((String) map.get("errorCode"));
 					pcmExceptionLogService.saveExceptionLogInfo(pcmExceptionLogDto);
 				}
 			}

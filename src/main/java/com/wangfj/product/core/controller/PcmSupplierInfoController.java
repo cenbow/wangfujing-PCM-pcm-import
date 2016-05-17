@@ -1,6 +1,8 @@
 package com.wangfj.product.core.controller;
 
+import com.wangfj.core.constants.ComErrorCodeConstants;
 import com.wangfj.core.framework.base.controller.BaseController;
+import com.wangfj.core.framework.exception.BleException;
 import com.wangfj.core.utils.*;
 import com.wangfj.product.common.domain.vo.PcmExceptionLogDto;
 import com.wangfj.product.common.service.intf.IPcmExceptionLogService;
@@ -231,36 +233,46 @@ public class PcmSupplierInfoController extends BaseController {
 
 					PcmSupplyInfo supplyInfo = transformParaToEntity(tempPara);
 
-					Map<String, Object> resultMap = pcmSupplyInfoService
-							.uploadSupplierFromEFutureERP(supplyInfo);
-					String result = resultMap.get("result") + "";
-					if (result.equals(Constants.PUBLIC_0 + "")) {
-						String dataContent = "门店上传:" + supplyInfo.toString() + "时失败";
-						requestMsg = "门店上传:" + supplyInfo.toString() + "时失败";
+					try {
+						Map<String, Object> resultMap = pcmSupplyInfoService.uploadSupplierFromEFutureERP(supplyInfo);
+						String result = resultMap.get("result") + "";
+						if (result.equals(Constants.PUBLIC_0 + "")) {
+							String dataContent = "门店上传:" + supplyInfo.toString() + "时失败;异常信息：操作数据库失败";
+							PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
+							exceptionLogdto.setInterfaceName("uploadPcmSupplyInfoFromEFutureERP");
+							exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_SUPPLY.getStatus());
+							exceptionLogdto.setDataContent(paraDest.toString());
+							exceptionLogdto.setErrorMessage(dataContent);
+							exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.SUPPLYINFO_NOT_EXISTENCE.getErrorCode());
+							exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
+						} else if (result.equals(Constants.PUBLIC_1 + "")) {
+							// 供应商信息下发（增量）
+							final String sid = resultMap.get("sid") + "";
+							final String actionCode = resultMap.get("actionCode") + "";
+							if (StringUtils.isNotEmpty(sid)) {
+								taskExecutor.execute(new Runnable() {
+									@Override
+									public void run() {
+										Map<String, Object> paraMap = new HashMap<String, Object>();
+										paraMap.put("sid", sid);
+										paraMap.put("actionCode", actionCode);
+										String url = PropertyUtil.getSystemUrl("pcm-syn")
+												+ "pcmSynSupplyInfo/pushSupplyInfo.htm";
+										String json = JsonUtil.getJSONString(paraMap);
+										HttpUtil.doPost(url, json);
+									}
+								});
+							}
+						}
+					}catch (BleException ble){
+						String dataContent = "门店上传:" + supplyInfo.toString() + "时失败;异常信息：" + ble.getMessage();
 						PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
 						exceptionLogdto.setInterfaceName("uploadPcmSupplyInfoFromEFutureERP");
 						exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_SUPPLY.getStatus());
 						exceptionLogdto.setDataContent(paraDest.toString());
 						exceptionLogdto.setErrorMessage(dataContent);
+						exceptionLogdto.setErrorCode(ble.getCode());
 						exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
-					} else if (result.equals(Constants.PUBLIC_1 + "")) {
-						// 供应商信息下发（增量）
-						final String sid = resultMap.get("sid") + "";
-						final String actionCode = resultMap.get("actionCode") + "";
-						if (StringUtils.isNotEmpty(sid)) {
-							taskExecutor.execute(new Runnable() {
-								@Override
-								public void run() {
-									Map<String, Object> paraMap = new HashMap<String, Object>();
-									paraMap.put("sid", sid);
-									paraMap.put("actionCode", actionCode);
-									String url = PropertyUtil.getSystemUrl("pcm-syn")
-											+ "pcmSynSupplyInfo/pushSupplyInfo.htm";
-									String json = JsonUtil.getJSONString(paraMap);
-									HttpUtil.doPost(url, json);
-								}
-							});
-						}
 					}
 				}
 			}

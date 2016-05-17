@@ -118,7 +118,7 @@ public class PcmCategoryToEPControllor extends BaseController {
 			exceptionLogdto.setDataContent(tongjicate.toString());
 			exceptionLogdto.setErrorMessage(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD
 					.getMemo());
-
+			exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD.getErrorCode());
 			exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
 			return ResultUtil.creComErrorResult(ComErrorCodeConstants.ErrorCode.DATA_OPER_ERROR.getErrorCode(),s);
 		}
@@ -186,7 +186,7 @@ public class PcmCategoryToEPControllor extends BaseController {
 			exceptionLogdto.setDataContent(manageCate.toString());
 			exceptionLogdto.setErrorMessage(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD
 					.getMemo());
-
+			exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD.getErrorCode());
 			exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
 			return ResultUtil.creComErrorResult(ComErrorCodeConstants.ErrorCode.DATA_OPER_ERROR.getErrorCode(),s);
 		}
@@ -250,7 +250,7 @@ public class PcmCategoryToEPControllor extends BaseController {
 			exceptionLogdto.setDataContent(IndustryCate.toString());
 			exceptionLogdto.setErrorMessage(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD
 					.getMemo());
-
+			exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD.getErrorCode());
 			exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
 			return ResultUtil.creComErrorResult(ComErrorCodeConstants.ErrorCode.DATA_OPER_ERROR.getErrorCode(),s);
 		}
