@@ -95,32 +95,6 @@ public class PcmShoppeProSupplyController {
                         e.printStackTrace();
                     }
 
-                    // 参数校验
-                    String storeCode = dto.getStoreCode();
-                    String supplierCode = dto.getSupplierCode();
-                    String action_CODE = dto.getACTION_CODE();
-                    if (!StringUtils.isNotEmpty(storeCode)) {
-                        throw new BleException(
-                                ComErrorCodeConstants.ErrorCode.PCMSHOPPEPRODUCTSUPPLY_STORECODE_IS_NULL
-                                        .getErrorCode(),
-                                ComErrorCodeConstants.ErrorCode.PCMSHOPPEPRODUCTSUPPLY_STORECODE_IS_NULL
-                                        .getMemo());
-                    }
-                    if (!StringUtils.isNotEmpty(supplierCode)) {
-                        throw new BleException(
-                                ComErrorCodeConstants.ErrorCode.PCMSHOPPEPRODUCTSUPPLY_SUPPLIERCODE_IS_NULL
-                                        .getErrorCode(),
-                                ComErrorCodeConstants.ErrorCode.PCMSHOPPEPRODUCTSUPPLY_SUPPLIERCODE_IS_NULL
-                                        .getMemo());
-                    }
-                    if (!StringUtils.isNotEmpty(action_CODE)) {
-                        throw new BleException(
-                                ComErrorCodeConstants.ErrorCode.PCMSHOPPEPRODUCTSUPPLY_ACTIONCODE_IS_NULL
-                                        .getErrorCode(),
-                                ComErrorCodeConstants.ErrorCode.PCMSHOPPEPRODUCTSUPPLY_ACTIONCODE_IS_NULL
-                                        .getMemo());
-                    }
-
                     try {
                         Map<String, Object> resultMap = shoppeProductSupplyService.uploadShoppeProSupply(dto);
 
