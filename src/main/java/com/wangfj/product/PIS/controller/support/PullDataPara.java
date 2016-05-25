@@ -189,8 +189,8 @@ public class PullDataPara {
 	private String isAdjustPrice;/* 是否允许ERP调价 */
 	private String isPromotion;/* 是否允许ERP促销 */
 	private String inventory;/* 期初库存 */
-	
-
+	private String productDesc;//商品描述
+    private String isOriginPackage;//是否原厂包装
 	//供应商商品上传新加字段
 	private String shortDesc;//商品描述（短描述）
 	private String purchasePrice;//供货价（采购价）
@@ -210,8 +210,157 @@ public class PullDataPara {
 	private String discountCode;//扣率码
 	private String productType;//商品类型1 普通商品（实物类），2 赠品 ，3 礼品，4 虚拟商品（充值卡，购物卡），5 服务类商品 （礼品包装，购物接送服务，停车服务）（注：礼品不可卖，赠品可卖
 	private String tmsType;//包装组
+	private String shelfLife;//总货架寿命
+	private String remainShelLife;//剩余货架寿命
+	private String sapProType;//电商商品类型
+	private String isCod;//是否COD Y：是，N：否
+	private String zzColorCode;//电商商品颜色码
+	private String zzSizeCode;//电商商品尺寸码
+	private String supplyOriginLand;//货源地
+	private String salesPrice;//售价
+	private String purStatus;//采购状态
+	private String salesStatus;//销售状态
 	
 	
+	public String getIsOriginPackage() {
+		return isOriginPackage;
+	}
+
+	public void setIsOriginPackage(String isOriginPackage) {
+		this.isOriginPackage = isOriginPackage;
+	}
+
+	public String getIsCod() {
+		return isCod;
+	}
+
+	public void setIsCod(String isCod) {
+		this.isCod = isCod;
+	}
+
+	public String getPurStatus() {
+		return purStatus;
+	}
+
+	public void setPurStatus(String purStatus) {
+		this.purStatus = purStatus;
+	}
+
+	public String getSalesStatus() {
+		return salesStatus;
+	}
+
+	public void setSalesStatus(String salesStatus) {
+		this.salesStatus = salesStatus;
+	}
+
+	public String getSupplyOriginLand() {
+		return supplyOriginLand;
+	}
+
+	public void setSupplyOriginLand(String supplyOriginLand) {
+		this.supplyOriginLand = supplyOriginLand;
+	}
+
+	/**
+	 * @Return the String salesPrice
+	 */
+	public String getSalesPrice() {
+		return salesPrice;
+	}
+
+	/**
+	 * @Param String salesPrice to set
+	 */
+	public void setSalesPrice(String salesPrice) {
+		this.salesPrice = salesPrice;
+	}
+
+	/**
+	 * @Return the String zzColorCode
+	 */
+	public String getZzColorCode() {
+		return zzColorCode;
+	}
+
+	/**
+	 * @Param String zzColorCode to set
+	 */
+	public void setZzColorCode(String zzColorCode) {
+		this.zzColorCode = zzColorCode;
+	}
+
+	/**
+	 * @Return the String zzSizeCode
+	 */
+	public String getZzSizeCode() {
+		return zzSizeCode;
+	}
+
+	/**
+	 * @Param String zzSizeCode to set
+	 */
+	public void setZzSizeCode(String zzSizeCode) {
+		this.zzSizeCode = zzSizeCode;
+	}
+
+	/**
+	 * @Return the String productDesc
+	 */
+	public String getProductDesc() {
+		return productDesc;
+	}
+
+	/**
+	 * @Param String productDesc to set
+	 */
+	public void setProductDesc(String productDesc) {
+		this.productDesc = productDesc;
+	}
+
+	/**
+	 * @Return the String shelfLife
+	 */
+	public String getShelfLife() {
+		return shelfLife;
+	}
+
+	/**
+	 * @Param String shelfLife to set
+	 */
+	public void setShelfLife(String shelfLife) {
+		this.shelfLife = shelfLife;
+	}
+
+	/**
+	 * @Return the String remainShelLife
+	 */
+	public String getRemainShelLife() {
+		return remainShelLife;
+	}
+
+	/**
+	 * @Param String remainShelLife to set
+	 */
+	public void setRemainShelLife(String remainShelLife) {
+		this.remainShelLife = remainShelLife;
+	}
+	
+
+	/**
+	 * @Return the String sapProType
+	 */
+	public String getSapProType() {
+		return sapProType;
+	}
+
+	/**
+	 * @Param String sapProType to set
+	 */
+	public void setSapProType(String sapProType) {
+		this.sapProType = sapProType;
+	}
+
 	public String getTmsType() {
 		return tmsType;
 	}
