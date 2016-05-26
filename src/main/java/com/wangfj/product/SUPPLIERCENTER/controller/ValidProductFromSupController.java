@@ -53,7 +53,7 @@ import com.wangfj.util.mq.PublishDTO;
 import com.wangfj.util.mq.RequestHeader;
 
 /**
- * 
+ * 供应商商品接口
  * @Class Name ValidProductController
  * @Author  wangc
  * @Create In 2016-3-30

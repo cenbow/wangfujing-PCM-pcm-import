@@ -128,10 +128,14 @@ public class ValidProductController extends BaseController {
 	// }
 	// }
 	//
-
+    //超市百货商品下发LIST
 	List<PublishDTO> sidList = null;
 	List<PublishDTO> skusidList = null;
 	List<PublishDTO> spusidList = null;
+	//电商商品下发LIST
+	List<PublishDTO> sapSidList = null;
+	/*List<PublishDTO> sapSkuSidList = null;
+	List<PublishDTO> sapSpuSidList = null;*/
 
 	/**
 	 * 商品准入导入终端上传商品到主数据ERP
@@ -169,17 +173,22 @@ public class ValidProductController extends BaseController {
 				List<ResultPullDataDto> resList = new ArrayList<ResultPullDataDto>();
 				// 异常信息LIST
 				List<ResultPullDataDto> excepList = new ArrayList<ResultPullDataDto>();
-				// 下发LIST
+				// 超市百货下发LIST
 				sidList = new ArrayList<PublishDTO>();
 				skusidList = new ArrayList<PublishDTO>();
 				spusidList = new ArrayList<PublishDTO>();
+				// 电商下发LIST
+				sapSidList = new ArrayList<PublishDTO>();
+				/*sapSkuSidList = new ArrayList<PublishDTO>();
+				sapSpuSidList = new ArrayList<PublishDTO>();*/
 				for (PullDataDto dataDto : listDataDto) {
 					ResultPullDataDto resDto = new ResultPullDataDto();
 					resDto.setLineNumber(dataDto.getLineNumber());
+					String type = dataDto.getType();//商品业态
 					try {
 						PcmShoppeProduct result = validProductService
 								.savePullProductFromEFuture(dataDto);
-						if (result != null) {
+						if (result != null && !"2".equals(type)) {//非电商商品按之前下发
 							resDto.setMessageCode(Constants.PUBLIC_0);
 							resDto.setMessageName("商品添加成功");
 							resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
@@ -188,27 +197,36 @@ public class ValidProductController extends BaseController {
 							publishDto.setSid(result.getSid());
 							publishDto.setType(Constants.PUBLIC_0);
 							sidList.add(publishDto);
-							if (result.getPackUnitDictSid() != 0l) {
-								// 下发SPU
-								PublishDTO publishDtoSpu = new PublishDTO();
-								publishDtoSpu.setSid(result.getPackUnitDictSid());
-								publishDtoSpu.setType(Constants.PUBLIC_0);
-								spusidList.add(publishDtoSpu);
-							}
-							if (result.getMeasureUnitDictSid() != 0l) {
-								// 下发SKU
-								PublishDTO publishDtoSku = new PublishDTO();
-								publishDtoSku.setSid(result.getMeasureUnitDictSid());
-								publishDtoSku.setType(Constants.PUBLIC_0);
-								skusidList.add(publishDtoSku);
-							}
-							// 缓存处理
-							RedisVo vo2 = new RedisVo();
-							vo2.setKey("skuPage");
-							vo2.setField(DomainName.getShoppeInfo);
-							vo2.setType(CacheUtils.HDEL);
-							CacheUtils.setRedisData(vo2);
+						}else{//电商商品下发电商和富基
+							resDto.setMessageCode(Constants.PUBLIC_0);
+							resDto.setMessageName("商品添加成功");
+							resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
+							// 下发专柜商品
+							PublishDTO publishDto = new PublishDTO();
+							publishDto.setSid(result.getSid());
+							publishDto.setType(Constants.PUBLIC_0);
+							sapSidList.add(publishDto);
 						}
+						if (result.getPackUnitDictSid() != 0l) {
+							// 下发SPU
+							PublishDTO publishDtoSpu = new PublishDTO();
+							publishDtoSpu.setSid(result.getPackUnitDictSid());
+							publishDtoSpu.setType(Constants.PUBLIC_0);
+							spusidList.add(publishDtoSpu);
+						}
+						if (result.getMeasureUnitDictSid() != 0l) {
+							// 下发SKU
+							PublishDTO publishDtoSku = new PublishDTO();
+							publishDtoSku.setSid(result.getMeasureUnitDictSid());
+							publishDtoSku.setType(Constants.PUBLIC_0);
+							skusidList.add(publishDtoSku);
+						}
+						// 缓存处理
+						RedisVo vo2 = new RedisVo();
+						vo2.setKey("skuPage");
+						vo2.setField(DomainName.getShoppeInfo);
+						vo2.setType(CacheUtils.HDEL);
+						CacheUtils.setRedisData(vo2);
 					} catch (BleException e) {
 						if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
 							ThrowExcetpionUtil.splitExcetpion(new BleException(e.getCode(), e
@@ -233,7 +251,16 @@ public class ValidProductController extends BaseController {
 						public void run() {
 							try {
 								logger.info("调用SYN服务下发专柜商品");
-								if (sidList != null && sidList.size() != 0) {
+								if(sapSidList != null && sapSidList.size() != 0){//电商商品下发
+									Map<String, Object> pushMap = new HashMap<String, Object>();
+									pushMap.put("paraList", sapSidList);
+									pushMap.put("PcmSapErpSourcePis", "1");
+									pushMap.put("PcmEfuturePromotionSourcePis", "1");
+									HttpUtil.doPost(
+											PropertyUtil.getSystemUrl("product.pushShoppeProduct"),
+											JsonUtil.getJSONString(pushMap));
+								}
+								if (sidList != null && sidList.size() != 0) {//非电商商品下发
 									Map<String, Object> pushMap = new HashMap<String, Object>();
 									pushMap.put("paraList", sidList);
 									pushMap.put("PcmEfutureERP", "1");

@@ -220,8 +220,26 @@ public class PullDataPara {
 	private String salesPrice;//售价
 	private String purStatus;//采购状态
 	private String salesStatus;//销售状态
+	private String zcolor;//特性色码
+	private String zsize;//特性尺码
 	
 	
+	public String getZcolor() {
+		return zcolor;
+	}
+
+	public void setZcolor(String zcolor) {
+		this.zcolor = zcolor;
+	}
+
+	public String getZsize() {
+		return zsize;
+	}
+
+	public void setZsize(String zsize) {
+		this.zsize = zsize;
+	}
+
 	public String getIsOriginPackage() {
 		return isOriginPackage;
 	}
@@ -456,7 +474,6 @@ public class PullDataPara {
 	public void setSalesTax(String salesTax) {
 		this.salesTax = salesTax;
 	}
-
 	public String getShortDesc() {
 		return shortDesc;
 	}

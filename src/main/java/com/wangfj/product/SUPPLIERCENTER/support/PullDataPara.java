@@ -4,147 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 上传使用DataPara
+ * 供应商商品上传使用DataPara
  * 
  * @Class Name PullDataPara
  * @Author wangsy
  * @Create In 2015年7月15日
  */
 public class PullDataPara {
-	//
-	// /**
-	// * 供应商代码(门店ERP的供应商编码)
-	// */
-	// @NotNull(message = "{PullDataPara.supplierCode.isNotNull}")
-	// private String supplierCode;
-	// /**
-	// * 专柜编码（中台的专柜编码）
-	// */
-	// @NotNull(message = "{PullDataPara.counterCode.isNotNull}")
-	// private String counterCode;
-	// /**
-	// * 商品大码（商品对应的门店ERP编码）
-	// */
-	// @NotNull(message = "{PullDataPara.erpProductCode.isNotNull}")
-	// private String erpProductCode;
-	// /**
-	// * 大码类型(商品大码在门店ERP中的大码类型skuType，对于导入终端只使用4和6)：
-	// * <p>
-	// * 0 价格码 1 长期统码 2 促销统码 3 特卖统码 4 扣率码 5 促销扣率码 6 单品码
-	// */
-	// @NotNull(message = "{PullDataPara.erpSkuType.isNotNull}")
-	// private String erpSkuType;
-	// /**
-	// * 管理分类
-	// */
-	// @NotNull(message = "{PullDataPara.gLCategotyCode.isNotNull}")
-	// private String glCategotyCode;
-	// /**
-	// * 品牌编码(集团品牌编码)。
-	// */
-	// @NotNull(message = "{PullDataPara.brandCode.isNotNull}")
-	// private String brandCode;
-	// /**
-	// * 门店品牌编码
-	// */
-	// @NotNull(message = "{PullDataPara.brandSid.isNotNull}")
-	// private String brandSid;
-	// /**
-	// * 门店编码
-	// */
-	// @NotNull(message = "{PullDataPara.storeCode.isNotNull}")
-	// private String storeCode;
-	// /**
-	// * 供应商内部系统商品编码（供应商系统内部商品编码）
-	// */
-	// private String supplierIntProdCode;
-	// /**
-	// * 商品企业内部条码（如果有企业内部条码则提供，否则为空）
-	// */
-	// private String supplierBarCode;
-	// /**
-	// * 国标条码（如果商品有国标条码则提供，否则为空）
-	// */
-	// private String standardBarCode;
-	// /**
-	// * 款号（吊牌或者外包装上的款号）
-	// */
-	// @NotNull(message = "{PullDataPara.productNum.isNotNull}")
-	// private String productNum;
-	// /**
-	// * 货号(吊牌或者外包装的货号，一般情况下货号是到款色规的编码，或者货号=款号)
-	// */
-	// @NotNull(message = "{PullDataPara.modelNum.isNotNull}")
-	// private String modelNum;
-	// /**
-	// * 商品名称
-	// */
-	// @NotNull(message = "{PullDataPara.productName.isNotNull}")
-	// private String productName;
-	// /**
-	// * 库存单位编码（单位字典中的编码）(销售单位)
-	// */
-	// @NotNull(message = "{PullDataPara.unitCode.isNotNull}")
-	// private String unitCode;
-	// /**
-	// * 色系
-	// */
-	// @NotNull(message = "{PullDataPara.colorSid.isNotNull}")
-	// private String colorSid;
-	// /**
-	// * 色码（吊牌或者外包装上的色码对应的字典编码,如果没有，必须传空）
-	// */
-	// @NotNull(message = "{PullDataPara.colorCode.isNotNull}")
-	// private String colorCode;
-	// /**
-	// * 颜色描述（一般情况下颜色描述=色码）
-	// */
-	// @NotNull(message = "{PullDataPara.colorName.isNotNull}")
-	// private String colorName;
-	// /**
-	// * 末级分类代码（末级工业分类在中台工业分类字典的编码）
-	// */
-	// @NotNull(message = "{PullDataPara.prodCategoryCode.isNotNull}")
-	// private String prodCategoryCode;
-	// /**
-	// * 尺码/规格
-	// */
-	// private String sizeCode;
-	// /**
-	// * 上市年份(yyyy)
-	// */
-	// @NotNull(message = "{PullDataPara.yearToMarket.isNotNull}")
-	// private String yearToMarket;
-	// /**
-	// * 季节（01 春；02夏；03秋；04冬；05春夏；06春秋；07秋冬；08四季）。传编码（例如01）。
-	// */
-	// @NotNull(message = "{PullDataPara.seasonCode.isNotNull}")
-	// private String seasonCode;
-	// /**
-	// * 吊牌价（原价）
-	// */
-	// @NotNull(message = "{PullDataPara.marketPrice.isNotNull}")
-	// private String marketPrice;
-	// /**
-	// * 管理类型(1单品;2大码)。传编码。按照20141030的决定，固定为1。
-	// */
-	// @NotNull(message = "{PullDataPara.manageType.isNotNull}")
-	// private String manageType;
-	// /**
-	// * 是否管库存(Y/N)
-	// */
-	// @NotNull(message = "{PullDataPara.isManageInventory.isNotNull}")
-	// private String isManageInventory;
-	// /**
-	// * 经营方式（Z001经销，Z002代销，Z003联营，Z004平台服务，Z005租赁）
-	// */
-	// @NotNull(message = "{PullDataPara.operateMode.isNotNull}")
-	// private String operateMode;
-	// /**
-	// * 商品简称(最多18个中文字符)。与最后一次准入的专柜商品简称保持一致。
-	// */
-	// private String productAbbr;
-
 	private String supplierCode;/* 供应商代码(门店ERP的供应商编码) */
 	private String counterCode; /* 专柜编码（中台的专柜编码） */
 	private String erpProductCode;/* 商品大码（商品对应的门店ERP编码） */
@@ -189,8 +55,6 @@ public class PullDataPara {
 	private String isAdjustPrice;/* 是否允许ERP调价 */
 	private String isPromotion;/* 是否允许ERP促销 */
 	private String inventory;/* 期初库存 */
-	
-
 	//供应商商品上传新加字段
 	private String shortDesc;//商品描述（短描述）
 	private String purchasePrice;//供货价（采购价）
@@ -211,8 +75,38 @@ public class PullDataPara {
 	private String productType;//商品类型1 普通商品（实物类），2 赠品 ，3 礼品，4 虚拟商品（充值卡，购物卡），5 服务类商品 （礼品包装，购物接送服务，停车服务）（注：礼品不可卖，赠品可卖
 	private String tmsType;//包装组
 	private String importNo;//供应商导入商品批次号
+	private String shelfLife;//总货架寿命
+	private String remainShelLife;//剩余货架寿命
 	
 	
+	/**
+	 * @Return the String shelfLife
+	 */
+	public String getShelfLife() {
+		return shelfLife;
+	}
+
+	/**
+	 * @Param String shelfLife to set
+	 */
+	public void setShelfLife(String shelfLife) {
+		this.shelfLife = shelfLife;
+	}
+
+	/**
+	 * @Return the String remainShelLife
+	 */
+	public String getRemainShelLife() {
+		return remainShelLife;
+	}
+
+	/**
+	 * @Param String remainShelLife to set
+	 */
+	public void setRemainShelLife(String remainShelLife) {
+		this.remainShelLife = remainShelLife;
+	}
+
 	public String getImportNo() {
 		return importNo;
 	}
