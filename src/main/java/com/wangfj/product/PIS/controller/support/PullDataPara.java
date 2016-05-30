@@ -223,7 +223,6 @@ public class PullDataPara {
 	private String zcolor;//特性色码
 	private String zsize;//特性尺码
 	
-	
 	public String getZcolor() {
 		return zcolor;
 	}
