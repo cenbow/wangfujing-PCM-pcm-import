@@ -565,13 +565,13 @@ public class PcmSupplierInfoController extends BaseController {
 			}
 		}
 
-		String action_DATE = tempPara.getACTION_DATE();
-		if (StringUtils.isNotEmpty(tempPara.getACTION_DATE())) {
-
-			Date lastOptDate = DateUtil.formatDate(action_DATE, "yyyymmdd.HHMMSS");
-			supplyInfo.setLastOptDate(lastOptDate);
-
-		}
+//		String action_DATE = tempPara.getACTION_DATE();
+//		if (StringUtils.isNotEmpty(tempPara.getACTION_DATE())) {
+//
+//			Date lastOptDate = DateUtil.formatDate(action_DATE, "yyyymmdd.HHMMSS");
+//			supplyInfo.setLastOptDate(lastOptDate);
+//
+//		}
 
 		if (StringUtils.isNotEmpty(tempPara.getACTION_PERSION())) {
 			supplyInfo.setLastOptUser(tempPara.getACTION_PERSION());
