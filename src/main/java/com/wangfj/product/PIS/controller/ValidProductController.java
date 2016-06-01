@@ -261,10 +261,10 @@ public class ValidProductController extends BaseController {
 									HttpUtil.doPost(
 											PropertyUtil.getSystemUrl("product.pushShoppeProduct"),
 											JsonUtil.getJSONString(pushMap));
-									logger.info("调用SYN服务下发电商商品条码");
+									/*logger.info("调用SYN服务下发电商商品条码");
 									HttpUtil.doPost(
 											PropertyUtil.getSystemUrl("product.pushBarcode"),
-											JsonUtil.getJSONString(sapSidList));
+											JsonUtil.getJSONString(sapSidList));*/
 								}
 								if (sidList != null && sidList.size() != 0) {//非电商商品下发
 									Map<String, Object> pushMap = new HashMap<String, Object>();
