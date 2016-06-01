@@ -188,45 +188,47 @@ public class ValidProductController extends BaseController {
 					try {
 						PcmShoppeProduct result = validProductService
 								.savePullProductFromEFuture(dataDto);
-						if (result != null && !"2".equals(type)) {//非电商商品按之前下发
-							resDto.setMessageCode(Constants.PUBLIC_0);
-							resDto.setMessageName("商品添加成功");
-							resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
-							// 下发专柜商品
-							PublishDTO publishDto = new PublishDTO();
-							publishDto.setSid(result.getSid());
-							publishDto.setType(Constants.PUBLIC_0);
-							sidList.add(publishDto);
-						}else{//电商商品下发电商和富基
-							resDto.setMessageCode(Constants.PUBLIC_0);
-							resDto.setMessageName("商品添加成功");
-							resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
-							// 下发专柜商品
-							PublishDTO publishDto = new PublishDTO();
-							publishDto.setSid(result.getSid());
-							publishDto.setType(Constants.PUBLIC_0);
-							sapSidList.add(publishDto);
+						if(result != null){
+							if (!"2".equals(type)) {//非电商商品按之前下发
+								resDto.setMessageCode(Constants.PUBLIC_0);
+								resDto.setMessageName("商品添加成功");
+								resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
+								// 下发专柜商品
+								PublishDTO publishDto = new PublishDTO();
+								publishDto.setSid(result.getSid());
+								publishDto.setType(Constants.PUBLIC_0);
+								sidList.add(publishDto);
+							}else{//电商商品下发电商和富基
+								resDto.setMessageCode(Constants.PUBLIC_0);
+								resDto.setMessageName("商品添加成功");
+								resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
+								// 下发专柜商品
+								PublishDTO publishDto = new PublishDTO();
+								publishDto.setSid(result.getSid());
+								publishDto.setType(Constants.PUBLIC_0);
+								sapSidList.add(publishDto);
+							}
+							if (result.getPackUnitDictSid() != 0l) {
+								// 下发SPU
+								PublishDTO publishDtoSpu = new PublishDTO();
+								publishDtoSpu.setSid(result.getPackUnitDictSid());
+								publishDtoSpu.setType(Constants.PUBLIC_0);
+								spusidList.add(publishDtoSpu);
+							}
+							if (result.getMeasureUnitDictSid() != 0l) {
+								// 下发SKU
+								PublishDTO publishDtoSku = new PublishDTO();
+								publishDtoSku.setSid(result.getMeasureUnitDictSid());
+								publishDtoSku.setType(Constants.PUBLIC_0);
+								skusidList.add(publishDtoSku);
+							}
+							// 缓存处理
+							RedisVo vo2 = new RedisVo();
+							vo2.setKey("skuPage");
+							vo2.setField(DomainName.getShoppeInfo);
+							vo2.setType(CacheUtils.HDEL);
+							CacheUtils.setRedisData(vo2);
 						}
-						if (result.getPackUnitDictSid() != 0l) {
-							// 下发SPU
-							PublishDTO publishDtoSpu = new PublishDTO();
-							publishDtoSpu.setSid(result.getPackUnitDictSid());
-							publishDtoSpu.setType(Constants.PUBLIC_0);
-							spusidList.add(publishDtoSpu);
-						}
-						if (result.getMeasureUnitDictSid() != 0l) {
-							// 下发SKU
-							PublishDTO publishDtoSku = new PublishDTO();
-							publishDtoSku.setSid(result.getMeasureUnitDictSid());
-							publishDtoSku.setType(Constants.PUBLIC_0);
-							skusidList.add(publishDtoSku);
-						}
-						// 缓存处理
-						RedisVo vo2 = new RedisVo();
-						vo2.setKey("skuPage");
-						vo2.setField(DomainName.getShoppeInfo);
-						vo2.setType(CacheUtils.HDEL);
-						CacheUtils.setRedisData(vo2);
 					} catch (BleException e) {
 						if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
 							ThrowExcetpionUtil.splitExcetpion(new BleException(e.getCode(), e
@@ -259,6 +261,10 @@ public class ValidProductController extends BaseController {
 									HttpUtil.doPost(
 											PropertyUtil.getSystemUrl("product.pushShoppeProduct"),
 											JsonUtil.getJSONString(pushMap));
+									logger.info("调用SYN服务下发电商商品条码");
+									HttpUtil.doPost(
+											PropertyUtil.getSystemUrl("product.pushBarcode"),
+											JsonUtil.getJSONString(sapSidList));
 								}
 								if (sidList != null && sidList.size() != 0) {//非电商商品下发
 									Map<String, Object> pushMap = new HashMap<String, Object>();
