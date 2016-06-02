@@ -53,6 +53,7 @@ import com.wangfj.product.organization.domain.vo.PcmOrganizationResultDto;
 import com.wangfj.product.organization.domain.vo.SelectPcmOrganizationDto;
 import com.wangfj.product.organization.service.intf.IPcmOrganizationService;
 import com.wangfj.util.Constants;
+import com.wangfj.util.mq.MqRequestDataListPara;
 import com.wangfj.util.mq.MqRequestDataPara;
 
 /**
@@ -313,12 +314,12 @@ public class PcmCategoryControllor extends BaseController {
 
 	@RequestMapping(value = "/uploadCategoryFromSAPERP", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> uploadCategoryFromSAPERP(@RequestBody MqRequestDataPara mqlist,
+	public Map<String, Object> uploadCategoryFromSAPERP(@RequestBody MqRequestDataListPara mqlist,
 			HttpServletRequest request) throws IllegalAccessException, InvocationTargetException {
 		String s = "";
 		PcmAddCategoryDto catedto = new PcmAddCategoryDto();
-		JSONObject js = JSONObject.fromObject(mqlist.getData());
-		JSONArray sq = JSONArray.fromObject(js.get("data"));
+//		JSONObject js = JSONObject.fromObject(mqlist.getData());
+		JSONArray sq = JSONArray.fromObject(mqlist.getData());
 		//JSONArray sq = JSONArray.fromObject(mqlist.getData());
 		List<CopyToCategoryPara> lists = new ArrayList<CopyToCategoryPara>();
 		
@@ -330,7 +331,7 @@ public class PcmCategoryControllor extends BaseController {
 			obj.setNAME(json.getString("NAME"));
 			obj.setSJCODE(json.getString("SJCODE"));
 			obj.setFLAG(json.getString("FLAG"));
-			obj.setTYPE(json.getString("TYPE"));
+			obj.setTYPE(json.getString("TYPE").trim());
 			obj.setSTATUS(json.getString("STATUS"));
 			obj.setISZG(json.getString("ISZG"));
 			obj.setActionCode(json.getString("ACTIONCODE"));
