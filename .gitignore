@@ -8,3 +8,5 @@ target/
 bin/
 .idea/
 *.iml
+*.jcoDestination
+*.trc
