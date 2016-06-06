@@ -406,7 +406,7 @@ public class PcmCategoryControllor extends BaseController {
 				} else {
 					catedto.setParentSid(catep.getSJCODE());
 				}
-				catedto.setIsLeaf(catep.getFLAG());
+				catedto.setIsLeaf(catep.getFLAG().equals("Y") ? "Y" : "N");
 				catedto.setLevel(Integer.parseInt(catep.getTYPE()));
 				catedto.setStatus(catep.getSTATUS());
 				catedto.setCategoryCode(catep.getCODE());
