@@ -78,11 +78,11 @@ public class PullDataPara {
 	private String shelfLife;//总货架寿命
 	private String remainShelLife;//剩余货架寿命
 	private String sapProType;//电商商品类型
-	private String isCod;//是否COD Y：是，N：否
+	private String isCOD;//是否COD Y：是，N：否
 	private String zzColorCode;//电商商品颜色码
 	private String zzSizeCode;//电商商品尺寸码
 	private String supplyOriginLand;//货源地
-	private String salesPrice;//售价
+	private String salePrice;//售价
 	private String purStatus;//采购状态
 	private String salesStatus;//销售状态
 	private String zcolor;//特性色码
@@ -97,12 +97,13 @@ public class PullDataPara {
 		this.sapProType = sapProType;
 	}
 
-	public String getIsCod() {
-		return isCod;
+
+	public String getIsCOD() {
+		return isCOD;
 	}
 
-	public void setIsCod(String isCod) {
-		this.isCod = isCod;
+	public void setIsCOD(String isCOD) {
+		this.isCOD = isCOD;
 	}
 
 	public String getZzColorCode() {
@@ -129,12 +130,12 @@ public class PullDataPara {
 		this.supplyOriginLand = supplyOriginLand;
 	}
 
-	public String getSalesPrice() {
-		return salesPrice;
+	public String getSalePrice() {
+		return salePrice;
 	}
 
-	public void setSalesPrice(String salesPrice) {
-		this.salesPrice = salesPrice;
+	public void setSalePrice(String salePrice) {
+		this.salePrice = salePrice;
 	}
 
 	public String getPurStatus() {

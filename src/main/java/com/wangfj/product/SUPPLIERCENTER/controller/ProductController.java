@@ -129,9 +129,7 @@ public class ProductController extends BaseController {
 					resDto.setLineNumber(dataDto.getLineNumber());
 					try {
 						if (StringUtils.isBlank(dataDto.getUnitCode())) {
-							dataDto.setUnitCode(dataDto.getBaseUnitCode());// 供应商基本计量单位
-																			// =
-																			// 销售单位
+							dataDto.setUnitCode(dataDto.getBaseUnitCode());// 供应商基本计量单位= 销售单位
 						}
 						if (StringUtils.isBlank(dataDto.getType())) {
 							dataDto.setType(dataDto.getBusinessType());// 业态

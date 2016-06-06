@@ -45,6 +45,7 @@ import com.wangfj.util.mq.MqRequestDataListPara;
 import com.wangfj.util.mq.MqUtil;
 import com.wangfj.util.mq.PublishDTO;
 import com.wangfj.util.mq.RequestHeader;
+import com.wfj.exception.client.util.StringUtils;
 
 /**
  * 商品和库存准入导入的校验服务
@@ -134,6 +135,8 @@ public class ValidProductController extends BaseController {
 	List<PublishDTO> spusidList = null;
 	//电商商品下发LIST
 	List<PublishDTO> sapSidList = null;
+	//不带要约的电商商品下发
+	List<PublishDTO> sapSidListOffernumIsNull =null;
 	/*List<PublishDTO> sapSkuSidList = null;
 	List<PublishDTO> sapSpuSidList = null;*/
 
@@ -179,6 +182,8 @@ public class ValidProductController extends BaseController {
 				spusidList = new ArrayList<PublishDTO>();
 				// 电商下发LIST
 				sapSidList = new ArrayList<PublishDTO>();
+				// 不带要约下发
+				sapSidListOffernumIsNull = new ArrayList<PublishDTO>();
 				/*sapSkuSidList = new ArrayList<PublishDTO>();
 				sapSpuSidList = new ArrayList<PublishDTO>();*/
 				for (PullDataDto dataDto : listDataDto) {
@@ -199,14 +204,27 @@ public class ValidProductController extends BaseController {
 								publishDto.setType(Constants.PUBLIC_0);
 								sidList.add(publishDto);
 							}else{//电商商品下发电商和富基
-								resDto.setMessageCode(Constants.PUBLIC_0);
-								resDto.setMessageName("商品添加成功");
-								resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
-								// 下发专柜商品
-								PublishDTO publishDto = new PublishDTO();
-								publishDto.setSid(result.getSid());
-								publishDto.setType(Constants.PUBLIC_0);
-								sapSidList.add(publishDto);
+								if(StringUtils.isBlank(dataDto.getOfferNumber())){
+									//如果电商商品没有要约 , 则只下发到SAP
+									resDto.setMessageCode(Constants.PUBLIC_0);
+									resDto.setMessageName("商品添加成功");
+									resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
+									// 下发专柜商品
+									PublishDTO publishDto = new PublishDTO();
+									publishDto.setSid(result.getSid());
+									publishDto.setType(Constants.PUBLIC_0);
+									sapSidListOffernumIsNull.add(publishDto);
+								}else{//如果有合同,则下发sap 搜索和future
+									resDto.setMessageCode(Constants.PUBLIC_0);
+									resDto.setMessageName("商品添加成功");
+									resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
+									// 下发专柜商品
+									PublishDTO publishDto = new PublishDTO();
+									publishDto.setSid(result.getSid());
+									publishDto.setType(Constants.PUBLIC_0);
+									sapSidList.add(publishDto);
+								}
+								
 							}
 							if (result.getPackUnitDictSid() != 0l) {
 								// 下发SPU
@@ -258,6 +276,7 @@ public class ValidProductController extends BaseController {
 									pushMap.put("paraList", sapSidList);
 									pushMap.put("PcmSapErpSourcePis", "1");
 									pushMap.put("PcmEfuturePromotionSourcePis", "1");
+									pushMap.put("PcmProSearch", "1");
 									HttpUtil.doPost(
 											PropertyUtil.getSystemUrl("product.pushShoppeProduct"),
 											JsonUtil.getJSONString(pushMap));
@@ -265,6 +284,16 @@ public class ValidProductController extends BaseController {
 									HttpUtil.doPost(
 											PropertyUtil.getSystemUrl("product.pushBarcode"),
 											JsonUtil.getJSONString(sapSidList));*/
+								}
+								//无合同商品 只下发sap
+								if(sapSidListOffernumIsNull != null && sapSidListOffernumIsNull.size() != 0){
+									Map<String, Object> pushMap = new HashMap<String, Object>();
+									pushMap.put("paraList", sapSidListOffernumIsNull);
+									pushMap.put("PcmSapErpSourcePis", "1");
+									pushMap.put("PcmProSearch", "1");
+									HttpUtil.doPost(
+											PropertyUtil.getSystemUrl("product.pushShoppeProduct"),
+											JsonUtil.getJSONString(pushMap));
 								}
 								if (sidList != null && sidList.size() != 0) {//非电商商品下发
 									Map<String, Object> pushMap = new HashMap<String, Object>();
