@@ -398,30 +398,21 @@ public class PcmCategoryControllor extends BaseController {
 				}
 				catedto.setActionCode(catep.getActionCode());
 				catedto.setCategorySid(catep.getCODE());
-				if (catep.getActionCode().equals("U")) {
-					catedto.setSid(catep.getSid());
-				} else if (catep.getActionCode().equals("D")) {
-					catedto.setSid(catep.getSid());
-					catedto.setCategoryCode(catep.getCODE());
-					catedto.setShopSid(catep.getStoreCode());
-					catedto.setStatus(Constants.N);
+				catedto.setCategoryType(Constants.PUBLIC_1);
+				catedto.setCreateTime(new Date());
+				catedto.setName(catep.getNAME());
+				if ("0".equals(catep.getSJCODE())) {
+					catedto.setParentSid(parentSid);
 				} else {
-					catedto.setCategoryType(Constants.PUBLIC_1);
-					catedto.setCreateTime(new Date());
-					catedto.setName(catep.getNAME());
-					if ("0".equals(catep.getSJCODE())) {
-						catedto.setParentSid(parentSid);
-					} else {
-						catedto.setParentSid(catep.getSJCODE());
-					}
-					catedto.setIsLeaf(catep.getFLAG());
-					catedto.setLevel(Integer.parseInt(catep.getTYPE()));
-					catedto.setStatus(catep.getSTATUS());
-					catedto.setCategoryCode(catep.getCODE());
-					catedto.setShopSid(catep.getStoreCode());
-					catedto.setIsSelfBuilt(0);
-					catedto.setIsMarket(Constants.PUBLIC_2 + "");
+					catedto.setParentSid(catep.getSJCODE());
 				}
+				catedto.setIsLeaf(catep.getFLAG());
+				catedto.setLevel(Integer.parseInt(catep.getTYPE()));
+				catedto.setStatus(catep.getSTATUS());
+				catedto.setCategoryCode(catep.getCODE());
+				catedto.setShopSid(catep.getStoreCode());
+				catedto.setIsSelfBuilt(0);
+				catedto.setIsMarket(Constants.PUBLIC_2 + "");
 				try {
 					s = categoryManageService.uploadeManagerCategoryDS(catedto);
 					if (s.equals(Constants.ADDSUCCESS) || s.equals(Constants.UPDATESUCCESS)) {
