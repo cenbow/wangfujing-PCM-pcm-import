@@ -420,15 +420,10 @@ public class PcmCategoryControllor extends BaseController {
 					catedto.setCategoryCode(catep.getCODE());
 					catedto.setShopSid(catep.getStoreCode());
 					catedto.setIsSelfBuilt(0);
-					if (catep.getISZG().equals(Constants.Y)) {
-						// Y=超市
-						catedto.setIsMarket(Constants.PUBLIC_1 + "");
-					} else if (catep.getISZG().equals(Constants.N)) {
-						catedto.setIsMarket(Constants.PUBLIC_0 + "");
-					}
+					catedto.setIsMarket(Constants.PUBLIC_2 + "");
 				}
 				try {
-					s = categoryManageService.uploadeManagerCategory(catedto);
+					s = categoryManageService.uploadeManagerCategoryDS(catedto);
 					if (s.equals(Constants.ADDSUCCESS) || s.equals(Constants.UPDATESUCCESS)) {
 						publishList.add(catep);
 						continue;
