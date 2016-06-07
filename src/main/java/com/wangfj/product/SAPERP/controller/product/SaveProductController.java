@@ -34,6 +34,8 @@ import com.wangfj.core.utils.JsonUtil;
 import com.wangfj.core.utils.PropertyUtil;
 import com.wangfj.core.utils.ThrowExcetpionUtil;
 import com.wangfj.product.SAPERP.controller.support.ProductsSAPERP;
+import com.wangfj.product.SAPERP.controller.support.SapContractPara;
+import com.wangfj.product.SAPERP.controller.support.SapProListPara;
 import com.wangfj.product.SAPERP.controller.support.SaveContractParaSAPERP;
 import com.wangfj.product.common.domain.vo.PcmExceptionLogDto;
 import com.wangfj.product.common.service.impl.PcmExceptionLogService;
@@ -45,6 +47,8 @@ import com.wangfj.product.maindata.domain.entity.PcmShoppeProduct;
 import com.wangfj.product.maindata.domain.entity.PcmShoppeProductExtend;
 import com.wangfj.product.maindata.domain.vo.PcmContractLogDto;
 import com.wangfj.product.maindata.domain.vo.PullDataDto;
+import com.wangfj.product.maindata.domain.vo.SapContractDto;
+import com.wangfj.product.maindata.domain.vo.SapProListDto;
 import com.wangfj.product.maindata.service.intf.IPcmContractLogService;
 import com.wangfj.product.maindata.service.intf.IPcmCreateProductService;
 import com.wangfj.product.maindata.service.intf.IValidProductService;
@@ -72,6 +76,142 @@ public class SaveProductController extends BaseController {
 	private IJcoSAPUtil jcoUtils;
 
 	/**
+	 * 新电商合同导入
+	 * 
+	 * @Methods Name saveContractFromNewSAPERP
+	 * @Create In 2016年6月6日 By yedong
+	 * @param para2
+	 * @return String
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/saveContractFromNewSAPERP", method = RequestMethod.POST)
+	public String saveContractFromNewSAPERP(
+			@RequestBody MqRequestDataListPara<SapContractPara> para2) {
+		final MqRequestDataListPara<SapContractPara> paraf = para2;
+		taskExecutor.execute(new Runnable() {
+			@Override
+			public void run() {
+				List<SapContractPara> data2 = paraf.getData();
+
+				// 返回信息LIST
+				List<Map<String, Object>> resList = new ArrayList<Map<String, Object>>();
+				// 异常信息LIST
+				List<Map<String, Object>> excepList = new ArrayList<Map<String, Object>>();
+				// 下发LIST
+				for (int l = 0; l < data2.size(); l++) {
+					List<SapProListDto> sapProList = new ArrayList<SapProListDto>();
+					SapContractDto dto = new SapContractDto();
+					try {
+						BeanUtils.copyProperties(dto, data2.get(l));
+						List<SapProListPara> prodtolist = data2.get(l).getPRODTOLIST();
+						for (SapProListPara sapProListPara : prodtolist) {
+							SapProListDto sapDto = new SapProListDto();
+							BeanUtils.copyProperties(sapDto, sapProListPara);
+							sapProList.add(sapDto);
+						}
+						dto.setPRODTOLIST(sapProList);
+					} catch (Exception e1) {
+						logger.error("BeanUtils.copyProperties-Error" + dto.toString());
+					}
+					// 写入/校验合同----------------------------------
+					List<PcmContractLogDto> contractLogDtos = new ArrayList<PcmContractLogDto>();
+					PcmContractLogDto contractDto = null;
+					try {
+						contractDto = createContractNewDto(dto);
+						contractLogDtos.add(contractDto);
+						pcmContractLogService.uploadContractLogBatch(contractLogDtos);// 电商合同上传，第二个参数是SAP
+
+						if (dto.getPRODTOLIST() != null && dto.getPRODTOLIST().size() > 0) {
+							List<Map<String, Object>> reMap = pcmContractLogService
+									.proAndContractLogInfoManager(dto.getPRODTOLIST(), contractDto);
+							for (Map<String, Object> map : reMap) {
+								resList.add(map);
+							}
+						}
+					} catch (BleException e1) {
+						logger.error(e1.getMessage() + dto.toString());
+						Map<String, Object> resMap = new HashMap<String, Object>();
+						resMap.put("KEY_FIELD", contractDto.getContractCode());
+						resMap.put("FLAG", 6);
+						resMap.put("MESSAGE", e1.getMessage());
+						resList.add(resMap);
+						excepList.add(resMap);
+						continue;
+					} catch (Exception e2) {
+						logger.error(ErrorCode.PARA_NORULE_ERROR.getMemo() + dto.toString());
+						Map<String, Object> resMap = new HashMap<String, Object>();
+						resMap.put("KEY_FIELD", contractDto.getContractCode());
+						resMap.put("FLAG", 6);
+						resMap.put("MESSAGE", ErrorCode.PARA_NORULE_ERROR.getMemo());
+						resList.add(resMap);
+						excepList.add(resMap);
+						continue;
+					}
+				}
+				// 写入异常表
+				if (excepList.size() != 0) {
+					PcmExceptionLogDto pcmExceptionLogDto = new PcmExceptionLogDto();
+					pcmExceptionLogDto.setInterfaceName("saveProductFromSAPERP");
+					pcmExceptionLogDto.setExceptionType(StatusCode.EXCEPTION_PRODUCT.getStatus());
+					pcmExceptionLogDto.setErrorMessage(JsonUtil.getJSONString(excepList));
+					pcmExceptionLogDto.setDataContent(JsonUtil.getJSONString(paraf));
+					pcmExceptionLogDto.setUuid(UUID.randomUUID().toString());
+					pcmExceptionLogService.saveExceptionLogInfo(pcmExceptionLogDto);
+					jcoUtils.functionExecute("ZFM_MD_PCM2SAP_ERROR_IN", "INPUT", resList);
+				}
+			}
+		});
+		return JsonUtil.getJSONString(MqUtil.GetMqResponseInfo(paraf.getHeader()));
+	}
+
+	/**
+	 * 生成合同表DTO
+	 * 
+	 * @Methods Name createContractDto
+	 * @Create In 2015年11月18日 By zhangxy
+	 * @param para
+	 * @return PcmContractLogDto
+	 */
+	private PcmContractLogDto createContractNewDto(SapContractDto dto) {
+		PcmContractLogDto pcmContractLogDto = new PcmContractLogDto();
+		pcmContractLogDto.setStoreCode(dto.getSTORECODE());
+		pcmContractLogDto.setContractCode(dto.getCONTRACTCODE());
+		pcmContractLogDto.setBuyType(Integer.valueOf(dto.getBUYTYPE()));
+		pcmContractLogDto.setOperMode(Integer.valueOf(dto.getOPERMODE()));
+		pcmContractLogDto.setSupplyCode(dto.getSUPPLIERCODE());
+		pcmContractLogDto.setOptTime(new Date());
+		pcmContractLogDto.setCol1(dto.getGLFL());// 管理分类
+		if ("E".equals(dto.getBUSINESSTYPE())) {
+			pcmContractLogDto.setBusinessType(0);
+		}
+		if ("C".equals(dto.getBUSINESSTYPE())) {
+			pcmContractLogDto.setBusinessType(2);
+		}
+		if (StringUtils.isNotBlank(dto.getINPUTTAX())) {
+			pcmContractLogDto.setInputTax(new BigDecimal(dto.getINPUTTAX()));
+		}
+		if (StringUtils.isNotBlank(dto.getOUTPUTTAX())) {
+			pcmContractLogDto.setOutputTax(new BigDecimal(dto.getOUTPUTTAX()));
+		}
+		if (StringUtils.isNotBlank(dto.getCOMMISSIONRATE())) {
+			pcmContractLogDto.setCommissionRate(new BigDecimal(dto.getCOMMISSIONRATE()));
+		}
+
+		if ("A".equals(dto.getACTION_CODE())) {
+			pcmContractLogDto.setFlag(0);
+		}
+		if ("U".equals(dto.getACTION_CODE())) {
+			pcmContractLogDto.setFlag(1);
+		}
+
+		// 经营方式
+
+		// 经销
+		pcmContractLogDto.setManageType(Integer.valueOf(dto.getMANAGETYPE()));
+		return pcmContractLogDto;
+	}
+
+	/**
 	 * 电商商品导入
 	 * 
 	 * @Methods Name saveProductFromSAPERP
@@ -89,8 +229,8 @@ public class SaveProductController extends BaseController {
 			public void run() {
 				RequestHeader header = para.getHeader();
 				List<ProductsSAPERP> data2 = para.getData();
-				List<ProductsSAPERP> data = JSON
-						.parseArray(JsonUtil.getJSONString(data2).toString(), ProductsSAPERP.class);
+				List<ProductsSAPERP> data = JSON.parseArray(JsonUtil.getJSONString(data2)
+						.toString(), ProductsSAPERP.class);
 				// 返回信息LIST
 				List<Map<String, Object>> resList = new ArrayList<Map<String, Object>>();
 				// 异常信息LIST
@@ -181,8 +321,8 @@ public class SaveProductController extends BaseController {
 						dataDto.setType("2");// 业态表示 0百货 1超市 2电商
 						dataDto.setOfferNumber(sapPara.getOFFERNUMBER());
 						try {
-							PcmShoppeProduct result = validProductService
-									.saveProductFromSAPERP(dataDto, extendDto);
+							PcmShoppeProduct result = validProductService.saveProductFromSAPERP(
+									dataDto, extendDto);
 							// Map<String, Object> resMap = new HashMap<String,
 							// Object>();
 							// resMap.put("MATNR", sapPara.getMATNR());
@@ -219,8 +359,8 @@ public class SaveProductController extends BaseController {
 							}
 						} catch (BleException e) {
 							if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
-								ThrowExcetpionUtil.splitExcetpion(
-										new BleException(e.getCode(), e.getMessage()));
+								ThrowExcetpionUtil.splitExcetpion(new BleException(e.getCode(), e
+										.getMessage()));
 							}
 							Map<String, Object> resMap = new HashMap<String, Object>();
 							resMap.put("KEY_FIELD", sapPara.getMATNR());
@@ -272,9 +412,9 @@ public class SaveProductController extends BaseController {
 											JsonUtil.getJSONString(spusidList));
 								}
 							} catch (Exception e) {
-								ThrowExcetpionUtil.splitExcetpion(
-										new BleException(ErrorCode.DOPOST_SYN_FAILED.getErrorCode(),
-												ErrorCode.DOPOST_SYN_FAILED.getMemo()));
+								ThrowExcetpionUtil.splitExcetpion(new BleException(
+										ErrorCode.DOPOST_SYN_FAILED.getErrorCode(),
+										ErrorCode.DOPOST_SYN_FAILED.getMemo()));
 							}
 						}
 					});
@@ -485,16 +625,13 @@ public class SaveProductController extends BaseController {
 		dto.setYearToMarket(para.getZSSDATE());// 上市日期（yyyymmdd）
 		dto.setProductNum(para.getGOODCLASS());// 商品款号
 		dto.setCrowdUser(para.getZZGENDER());// 适用性别
-		if (StringUtils.isNotBlank(para.getTAXKM1())
-				&& para.getTAXKM1().trim().indexOf("%") == -1) {
+		if (StringUtils.isNotBlank(para.getTAXKM1()) && para.getTAXKM1().trim().indexOf("%") == -1) {
 			dto.setOutputTax(para.getTAXKM1().trim() + "%");// 销项税
 		}
-		if (StringUtils.isNotBlank(para.getTAXKM2())
-				&& para.getTAXKM2().trim().indexOf("%") == -1) {
+		if (StringUtils.isNotBlank(para.getTAXKM2()) && para.getTAXKM2().trim().indexOf("%") == -1) {
 			dto.setConsumptionTax(para.getTAXKM2().trim() + "%");// 消费税
 		}
-		if (StringUtils.isNotBlank(para.getTAXKM3())
-				&& para.getTAXKM3().trim().indexOf("%") == -1) {
+		if (StringUtils.isNotBlank(para.getTAXKM3()) && para.getTAXKM3().trim().indexOf("%") == -1) {
 			dto.setInputTax(para.getTAXKM3().trim() + "%");// 进项税
 		}
 		dto.setSeasonCode(para.getSAISO());// 季节
