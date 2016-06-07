@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class SaveContractParaSAPERP {
+	@NotNull(message = "管理分类不能为空")
 	@JsonProperty(value = "GLFL")//管理分类
 	private String GLFL;
 	

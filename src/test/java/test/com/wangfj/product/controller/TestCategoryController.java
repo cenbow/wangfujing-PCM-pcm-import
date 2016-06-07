@@ -22,6 +22,7 @@ import com.wangfj.product.EfutureERP.controller.support.PcmManageCategoryPara;
 import com.wangfj.product.EfutureERP.controller.support.PcmSelectCategoryPara;
 import com.wangfj.product.EfutureERP.controller.support.PcmTJCategoryPara;
 import com.wangfj.product.category.domain.vo.IndustryCategoryDto;
+import com.wangfj.util.mq.MqRequestDataPara;
 import com.wangfj.util.mq.RequestHeader;
 
 /**
@@ -208,5 +209,14 @@ public class TestCategoryController {
 		System.out.println(response);
 	}
 
-	
+	@Test
+	public void test1(){
+		MqRequestDataPara pcmcatedto = new MqRequestDataPara();
+		pcmcatedto.setData("[{\"STORECODE\": \"12312\",\"CODE\": \"23412\",\"NAME\": \"1212aeq\"}]");
+		
+		String response = HttpUtil.doPost(
+				"http://127.0.0.1:8085/pcm-import/categorymanage/uploadCategoryFromSAPERP.htm",
+				JsonUtil.getJSONString(pcmcatedto));
+		System.out.println(response);
+	}
 }

@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,141 +50,6 @@ public class PcmSupplierInfoController extends BaseController {
 
 	@Autowired
 	private IPcmExceptionLogService exceptionLogService;
-
-	// /**
-	// * 供应商主数据从门店ERP上传到Pcm
-	// *
-	// * @Methods Name uploadPcmSupplyInfoFromERP
-	// * @Create In 2015-8-25 By wangxuan
-	// * @param para
-	// * @return String
-	// */
-	// @RequestMapping(value = "/uploadPcmSupplyInfoFromEFutureERP", method = {
-	// RequestMethod.GET,
-	// RequestMethod.POST })
-	// @ResponseBody
-	// public String uploadPcmSupplyInfoFromEFutureERP(@RequestBody
-	// MqRequestDataPara para,
-	// HttpServletRequest request) {
-	//
-	// final MqRequestDataPara paraDest = new MqRequestDataPara();
-	// try {
-	// BeanUtils.copyProperties(paraDest, para);
-	// } catch (IllegalAccessException e1) {
-	// e1.printStackTrace();
-	// } catch (InvocationTargetException e1) {
-	// e1.printStackTrace();
-	// }
-	//
-	// taskExecutor.execute(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	//
-	// JSONObject jsonData = JSONObject.fromObject(paraDest.getData());
-	// JSONArray jsonSupply = JSONArray.fromObject(jsonData.get("data"));
-	// List<PcmSupplyInfoPara> supplyInfoParaList =
-	// JSONArray.toList(jsonSupply);
-	//
-	// String callBackUrl = paraDest.getHeader().getCallbackUrl();
-	// String requestMsg = "";
-	// /* 将得到的参数赋到list中 */
-	// for (int i = 0; i < supplyInfoParaList.size(); i++) {
-	//
-	// PcmSupplyInfoPara tempPara = new PcmSupplyInfoPara();
-	// try {
-	// BeanUtils.copyProperties(tempPara, supplyInfoParaList.get(i));
-	// } catch (IllegalAccessException e) {
-	// e.printStackTrace();
-	// } catch (InvocationTargetException e) {
-	// e.printStackTrace();
-	// }
-	//
-	// PcmSupplyInfo supplyInfo = transformParaToEntity(tempPara);
-	//
-	// String action_CODE = tempPara.getACTION_CODE();
-	// if (StringUtils.isNotEmpty(action_CODE)) {
-	//
-	// Integer result = Constants.PUBLIC_0;
-	// if (action_CODE.toUpperCase().equals(Constants.A)) {
-	// result = pcmSupplyInfoService.addSupplyInfo(supplyInfo);
-	// if (result == 0) {
-	// String dataContent = "向数据库插入:" + supplyInfo.toString() + "时失败";
-	// requestMsg = "向数据库插入:" + supplyInfo.toString() + "时失败";
-	// PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
-	// exceptionLogdto
-	// .setInterfaceName("uploadPcmSupplyInfoFromEFutureERP");
-	// exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_SUPPLY
-	// .getStatus());
-	// exceptionLogdto.setDataContent(paraDest.toString());
-	// exceptionLogdto.setErrorMessage(dataContent);
-	// exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
-	// } else {
-	//
-	// // 供应商信息下发（增量）
-	// final Long sid = supplyInfo.getSid();
-	// if (sid != null) {
-	// taskExecutor.execute(new Runnable() {
-	// @Override
-	// public void run() {
-	// Map<String, Object> paraMap = new HashMap<String, Object>();
-	// paraMap.put("sid", sid);
-	// paraMap.put("actionCode", Constants.A);
-	// String url = PropertyUtil.getSystemUrl("pcm-syn")
-	// + "pcmSynSupplyInfo/pushSupplyInfo.htm";
-	// String json = JsonUtil.getJSONString(paraMap);
-	// HttpUtil.doPost(url, json);
-	// }
-	// });
-	// }
-	//
-	// }
-	// }
-	//
-	// if (action_CODE.toUpperCase().equals(Constants.U)) {
-	// result = pcmSupplyInfoService.updateSupplyInfoBySupplyCode(supplyInfo);
-	// if (result == 0) {
-	// String dataContent = "数据库修改:" + supplyInfo.toString() + "时失败";
-	// requestMsg = "数据库修改:" + supplyInfo.toString() + "时失败";
-	// PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
-	// exceptionLogdto
-	// .setInterfaceName("uploadPcmSupplyInfoFromEFutureERP");
-	// exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_SUPPLY
-	// .getStatus());
-	// exceptionLogdto.setDataContent(paraDest.toString());
-	// exceptionLogdto.setErrorMessage(dataContent);
-	// exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
-	//
-	// } else {
-	//
-	// // 供应商信息下发（增量）
-	// final String supplyCode = supplyInfo.getSupplyCode();
-	// final String shopSid = supplyInfo.getShopSid();
-	// taskExecutor.execute(new Runnable() {
-	// @Override
-	// public void run() {
-	// Map<String, Object> paraMap = new HashMap<String, Object>();
-	// paraMap.put("supplyCode", supplyCode);
-	// paraMap.put("shopSid", shopSid);
-	// paraMap.put("actionCode", Constants.U);
-	// String url = PropertyUtil.getSystemUrl("pcm-syn")
-	// + "pcmSynSupplyInfo/pushSupplyInfo.htm";
-	// String json = JsonUtil.getJSONString(paraMap);
-	// HttpUtil.doPost(url, json);
-	// }
-	// });
-	// }
-	// }
-	// }
-	//
-	// }
-	// }
-	//
-	// });
-	//
-	// return
-	// JsonUtil.getJSONString(MqUtil.GetMqResponseInfo(paraDest.getHeader()));
-	// }
 
 	/**
 	 * 供应商主数据从门店ERP上传到Pcm
@@ -565,13 +429,13 @@ public class PcmSupplierInfoController extends BaseController {
 			}
 		}
 
-		String action_DATE = tempPara.getACTION_DATE();
-		if (StringUtils.isNotEmpty(tempPara.getACTION_DATE())) {
-
-			Date lastOptDate = DateUtil.formatDate(action_DATE, "yyyymmdd.HHMMSS");
-			supplyInfo.setLastOptDate(lastOptDate);
-
-		}
+//		String action_DATE = tempPara.getACTION_DATE();
+//		if (StringUtils.isNotEmpty(tempPara.getACTION_DATE())) {
+//
+//			Date lastOptDate = DateUtil.formatDate(action_DATE, "yyyymmdd.HHMMSS");
+//			supplyInfo.setLastOptDate(lastOptDate);
+//
+//		}
 
 		if (StringUtils.isNotEmpty(tempPara.getACTION_PERSION())) {
 			supplyInfo.setLastOptUser(tempPara.getACTION_PERSION());

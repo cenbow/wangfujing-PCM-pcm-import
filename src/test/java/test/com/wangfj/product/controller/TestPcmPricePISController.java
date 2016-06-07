@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.wangfj.core.utils.DateUtil;
 import com.wangfj.core.utils.HttpUtil;
@@ -18,6 +22,8 @@ import com.wangfj.core.utils.JsonUtil;
 import com.wangfj.product.EfutureERP.controller.support.PcmPriceEFERPPara;
 import com.wangfj.product.PIS.controller.support.PcmPricePISPara;
 import com.wangfj.product.PIS.controller.support.PcmPricePara;
+import com.wangfj.product.price.domain.entity.PcmChangePriceRecord;
+import com.wangfj.product.price.persistence.PcmChangePriceRecordMapper;
 import com.wangfj.util.Constants;
 import com.wangfj.util.mq.MqRequestDataListPara;
 import com.wangfj.util.mq.MqRequestDataPara;
@@ -32,6 +38,8 @@ import net.sf.json.JSONObject;
  * @Author kongqf
  * @Create In 2015年8月3日
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
 public class TestPcmPricePISController {
 
 	// String URL = "http://10.6.2.48:8085";
@@ -293,6 +301,57 @@ public class TestPcmPricePISController {
 				"http://127.0.0.1:8085/pcm-import/changeprice/eferp/importProPriceInfo.htm",
 				JsonUtil.getJSONString(js));
 		System.out.println(JsonUtil.getJSONString(response));
+	}
+
+	@Autowired
+	private PcmChangePriceRecordMapper recordMapper;
+
+	/***
+	 * 测试大码变价
+	 * 
+	 * @Methods Name testERP
+	 * @Create In 2015年10月30日 By kongqf void
+	 */
+	@Test
+	public void testERP2() {
+
+		long maxNum = 1;
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		for (Long i = 1L; i <= maxNum; i++) {
+			listMap.clear();
+			PcmChangePriceRecord dto = recordMapper.selectByPrimaryKey(i);
+
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("STORECODE", dto.getStoreCode());
+			map.put("MATNR", dto.getMatnr());
+			map.put("SupplierProdCode", dto.getSupplierProdCode());
+			map.put("ZSPRICE", dto.getZsprice());
+			map.put("SITECODE", dto.getSiteCode());
+			map.put("WAERS", dto.getWaers());
+			map.put("BDATE", dto.getBdate());
+			map.put("EDATE", dto.getEdate());
+			map.put("CHANGECODE", dto.getChangeCode());
+			map.put("ACTION_CODE", dto.getActionCode());
+			map.put("ACTION_DATE", dto.getActionDate());
+			map.put("ACTION_PERSION", dto.getActionPersion());
+			listMap.add(map);
+
+			Map<String, Object> maps = new HashMap<String, Object>();
+			RequestHeader rh = new RequestHeader();
+			maps.put("data", JsonUtil.getJSONString(listMap));
+
+			maps.put("header", rh);
+			JSONObject js1 = JSONObject.fromObject(maps);
+			Map<String, Object> maps2 = new HashMap<String, Object>();
+			maps2.put("data", js1.toString());
+			JSONObject js = JSONObject.fromObject(maps2);
+
+			String response = HttpUtil.doPost(
+//					"http://10.6.3.120:8060/pcm-import/changeprice/eferp/importProPriceInfo.htm",
+					"http://127.0.0.1:8085/pcm-import/changeprice/eferp/importProPriceInfo.htm",
+					JsonUtil.getJSONString(js));
+			System.out.println(JsonUtil.getJSONString(response));
+		}
 	}
 
 	/**
