@@ -51,6 +51,7 @@ import com.wangfj.product.maindata.domain.vo.SapContractDto;
 import com.wangfj.product.maindata.domain.vo.SapProListDto;
 import com.wangfj.product.maindata.service.intf.IPcmContractLogService;
 import com.wangfj.product.maindata.service.intf.IPcmCreateProductService;
+import com.wangfj.product.maindata.service.intf.IPcmShoppeProductService;
 import com.wangfj.product.maindata.service.intf.IValidProductService;
 import com.wangfj.util.Constants;
 import com.wangfj.util.mq.MqRequestDataListPara;
@@ -74,6 +75,8 @@ public class SaveProductController extends BaseController {
 	private IPcmCreateProductService pcmCreateProductService;
 	@Autowired
 	private IJcoSAPUtil jcoUtils;
+	@Autowired
+	private IPcmShoppeProductService proService;
 
 	/**
 	 * 新电商合同导入
@@ -120,13 +123,35 @@ public class SaveProductController extends BaseController {
 						contractDto = createContractNewDto(dto);
 						contractLogDtos.add(contractDto);
 						pcmContractLogService.uploadContractLogBatch(contractLogDtos);// 电商合同上传，第二个参数是SAP
-
 						if (dto.getPRODTOLIST() != null && dto.getPRODTOLIST().size() > 0) {
+							List<PublishDTO> sidList = new ArrayList<PublishDTO>();
 							List<Map<String, Object>> reMap = pcmContractLogService
 									.proAndContractLogInfoManager(dto.getPRODTOLIST(), contractDto);
 							for (Map<String, Object> map : reMap) {
 								resList.add(map);
 							}
+							List<SapProListDto> prodtolist = dto.getPRODTOLIST();
+							List<Long> proSidList = proService.getSidListBySapProCode(prodtolist);
+							for (Long sid : proSidList) {
+								PublishDTO dto1 = new PublishDTO();
+								dto1.setSid(sid);
+								dto1.setType(0);
+								sidList.add(dto1);
+							}
+							// 专柜商品信息下发 - 搜索OPS前台展示 - 电商SAPERP - 富集
+							final Map<String, Object> paramMap = new HashMap<String, Object>();
+							paramMap.put("paraList", proSidList);
+							// paramMap.put("PcmEfutureERP", "1"); // 门店
+							// paramMap.put("PcmSapErp", "1"); // SAP
+							paramMap.put("PcmEfuturePromotion", "1"); // 富基
+							// paramMap.put("PcmSearcherOffline", "1"); // 搜索线下
+							// paramMap.put("PcmSearcherOnline", "1"); // 搜索线上上架
+							// paramMap.put("PcmSearcherOnline2", "1"); //
+							// 搜索线上下架
+							paramMap.put("PcmProSearch", "1");
+							HttpUtil.doPost(PropertyUtil.getSystemUrl("pcm-syn")
+									+ "/pcmShoppeProduct/publishShoppeProductFromPcm.htm",
+									JsonUtil.getJSONString(paramMap));
 						}
 					} catch (BleException e1) {
 						logger.error(e1.getMessage() + dto.toString());
