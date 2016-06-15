@@ -126,7 +126,7 @@ public class PcmShoppeProSupplyController {
                     }
                 }
 
-                if (sidParaList.size() > 0) {
+                if (sidParaList.size() > 0) {//专柜商品下发
                     final Map<String, Object> pushMap = new HashMap<String, Object>();
                     pushMap.put("paraList", sidParaList);
                     pushMap.put("PcmProSearch", 1);
