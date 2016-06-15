@@ -5,7 +5,6 @@ import com.wangfj.core.framework.exception.BleException;
 import com.wangfj.core.utils.HttpUtil;
 import com.wangfj.core.utils.JsonUtil;
 import com.wangfj.core.utils.PropertyUtil;
-import com.wangfj.core.utils.StringUtils;
 import com.wangfj.product.common.domain.vo.PcmExceptionLogDto;
 import com.wangfj.product.common.service.intf.IPcmExceptionLogService;
 import com.wangfj.product.constants.StatusCodeConstants.StatusCode;
@@ -82,8 +81,8 @@ public class PcmShoppeProSupplyController {
                 String callBackUrl = paraDest.getHeader().getCallbackUrl();
                 String requestMsg = "";
 
-                //下发专柜商品
-                List<Map<String, Object>> sidParaList = new ArrayList<Map<String, Object>>();
+                List<Map<String, Object>> sidParaList = new ArrayList<Map<String, Object>>();//下发专柜商品
+                final List<Map<String, Object>> dtoList = new ArrayList<Map<String, Object>>();//下发一品多商
                 for (int i = 0; i < shoppeProSupplyParaList.size(); i++) {
                     PcmShoppeProSupplyUploadDto dto = new PcmShoppeProSupplyUploadDto();
 
@@ -111,8 +110,12 @@ public class PcmShoppeProSupplyController {
                         }
 
                         Map<String, Object> shoppeProductMap = (Map<String, Object>) resultMap.get("shoppeProductMap");
-                        if (shoppeProductMap != null) {
-                            sidParaList.add(shoppeProductMap);
+                        if (shoppeProductMap != null && !shoppeProductMap.isEmpty()) {
+                            sidParaList.add(shoppeProductMap);//下发专柜商品数据封装
+                        }
+                        Map<String, Object> shoppeProSupplyMap = (Map<String, Object>) resultMap.get("shoppeProSupplyMap");
+                        if (shoppeProSupplyMap != null && !shoppeProSupplyMap.isEmpty()) {
+                            dtoList.add(shoppeProSupplyMap);//下发一品多商数据封装
                         }
                     } catch (BleException ble) {
                         String dataContent = "一品多供应商关系上传时数据:" + dto.toString() + "时失败;异常信息：" + ble.getMessage();
@@ -135,6 +138,16 @@ public class PcmShoppeProSupplyController {
                         public void run() {
                             String shoppeProductUrl = PropertyUtil.getSystemUrl("product.pushShoppeProduct");
                             HttpUtil.doPost(shoppeProductUrl, JsonUtil.getJSONString(pushMap));
+                        }
+                    });
+                }
+
+                if (dtoList.size() > 0) {//一品多商下发
+                    taskExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            String shoppeProSupplyUrl = PropertyUtil.getSystemUrl("product.pushShoppeProSupply");
+                            HttpUtil.doPost(shoppeProSupplyUrl, JsonUtil.getJSONString(dtoList));
                         }
                     });
                 }
