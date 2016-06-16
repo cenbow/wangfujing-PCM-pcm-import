@@ -61,7 +61,7 @@ public class PcmStockImportSAPController {
 	@ResponseBody
 	@RequestMapping(value = "/findStockImportFromPcm", produces = "application/json; charset=utf-8")
 	public String findStockImportFromPcm(HttpServletRequest request,
-			@RequestBody @Valid MqRequestDataListPara mqpara1) {
+			@RequestBody @Valid MqRequestDataListPara<PcmStockPara> mqpara1) {
 		final List<Map<String, Object>> resultMapList = new ArrayList<Map<String, Object>>();
 		final MqRequestDataListPara<PcmStockPara> mqpara = new MqRequestDataListPara<PcmStockPara>();
 		org.springframework.beans.BeanUtils.copyProperties(mqpara1, mqpara);
