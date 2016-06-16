@@ -91,14 +91,14 @@ public class PcmAllSysSaveProductController extends BaseController{
 	private IPcmCreateProductService pcmCreateProductService;
 	@Autowired
 	private IJcoSAPUtil jcoUtils;
-    //超市百货商品下发LIST
+   /* //超市百货商品下发LIST
 	List<PublishDTO> sidList = null;
 	List<PublishDTO> skusidList = null;
 	List<PublishDTO> spusidList = null;
 	//电商商品下发LIST
 	List<PublishDTO> sapSidList = null;
 	//不带要约的电商商品下发
-	List<PublishDTO> sapSidListOffernumIsNull =null;
+	List<PublishDTO> sapSidListOffernumIsNull =null;*/
 	/*List<PublishDTO> sapSkuSidList = null;
 	List<PublishDTO> sapSpuSidList = null;*/
 
@@ -131,17 +131,18 @@ public class PcmAllSysSaveProductController extends BaseController{
 					listDataDto.add(dataDto);
 				}
 
+				//超市百货商品下发LIST
+				final List<PublishDTO> sidList = new ArrayList<PublishDTO>();
+				final List<PublishDTO> skusidList = new ArrayList<PublishDTO>();
+				final List<PublishDTO> spusidList = new ArrayList<PublishDTO>();
+				//电商商品下发LIST
+				final List<PublishDTO> sapSidList = new ArrayList<PublishDTO>();
+				//不带要约的电商商品下发
+				final List<PublishDTO> sapSidListOffernumIsNull =new ArrayList<PublishDTO>();
 				// 回调信息LIST
-				List<ResultPullDataDto> resList = new ArrayList<ResultPullDataDto>();
+				final List<ResultPullDataDto> resList = new ArrayList<ResultPullDataDto>();
 				// 异常信息LIST
-				List<ResultPullDataDto> excepList = new ArrayList<ResultPullDataDto>();
-				// 超市百货下发LIST
-				sidList = new ArrayList<PublishDTO>();
-				skusidList = new ArrayList<PublishDTO>();
-				spusidList = new ArrayList<PublishDTO>();
-				// 电商下发LIST
-				sapSidList = new ArrayList<PublishDTO>();
-				
+				final List<ResultPullDataDto> excepList = new ArrayList<ResultPullDataDto>();
 				PublishDTO dt = new PublishDTO();
 				dt.setSid(1l);
 				PublishDTO dt1 = new PublishDTO();
@@ -154,9 +155,6 @@ public class PcmAllSysSaveProductController extends BaseController{
 				System.out.println("------------------------------------------------导入终端---------------------------------------------------");
 				System.out.println(sapSidList.toString());
 				System.out.println("-----------------------------------------------------------------------------------------------------------");
-				
-				// 不带要约下发
-				sapSidListOffernumIsNull = new ArrayList<PublishDTO>();
 				for (PcmAllSysPullDataDto dataDto : listDataDto) {
 					ResultPullDataDto resDto = new ResultPullDataDto();
 					resDto.setLineNumber(dataDto.getLineNumber());
@@ -354,15 +352,17 @@ public class PcmAllSysSaveProductController extends BaseController{
 				}
 
 				// 回调信息LIST
-				List<ResultPullDataForSupllierDto> resList = new ArrayList<ResultPullDataForSupllierDto>();
+				final List<ResultPullDataForSupllierDto> resList = new ArrayList<ResultPullDataForSupllierDto>();
 				// 异常信息LIST
-				List<ResultPullDataForSupllierDto> excepList = new ArrayList<ResultPullDataForSupllierDto>();
-				// 下发LIST
-				sidList = new ArrayList<PublishDTO>();
-				skusidList = new ArrayList<PublishDTO>();
-				spusidList = new ArrayList<PublishDTO>();
-				// 电商下发LIST
-				sapSidList = new ArrayList<PublishDTO>();
+				final List<ResultPullDataForSupllierDto> excepList = new ArrayList<ResultPullDataForSupllierDto>();
+				//超市百货商品下发LIST
+				final List<PublishDTO> sidList = new ArrayList<PublishDTO>();
+				final List<PublishDTO> skusidList = new ArrayList<PublishDTO>();
+				final List<PublishDTO> spusidList = new ArrayList<PublishDTO>();
+				//电商商品下发LIST
+				final List<PublishDTO> sapSidList = new ArrayList<PublishDTO>();
+				//不带要约的电商商品下发
+				final List<PublishDTO> sapSidListOffernumIsNull =new ArrayList<PublishDTO>();
 				PublishDTO dt = new PublishDTO();
 				dt.setSid(4l);
 				PublishDTO dt1 = new PublishDTO();
@@ -375,8 +375,6 @@ public class PcmAllSysSaveProductController extends BaseController{
 				System.out.println("------------------------------------------------供应商平台---------------------------------------------------");
 				System.out.println(sapSidList.toString());
 				System.out.println("-----------------------------------------------------------------------------------------------------------");
-				// 不带要约下发
-				sapSidListOffernumIsNull = new ArrayList<PublishDTO>();
 				for (PcmAllSysPullDataDto dataDto : listDataDto) {
 					ResultPullDataForSupllierDto resDto = new ResultPullDataForSupllierDto();
 					resDto.setLineNumber(dataDto.getLineNumber());
