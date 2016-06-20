@@ -47,6 +47,7 @@ import com.wangfj.product.common.service.intf.IJcoSAPUtil;
 import com.wangfj.product.constants.DomainName;
 import com.wangfj.product.constants.FlagType;
 import com.wangfj.product.constants.StatusCodeConstants.StatusCode;
+import com.wangfj.product.core.controller.support.PcmAllSysPullDataPara;
 import com.wangfj.product.maindata.domain.entity.PcmShoppeProduct;
 import com.wangfj.product.maindata.domain.entity.PcmShoppeProductExtend;
 import com.wangfj.product.maindata.domain.vo.PcmAllSysPullDataDto;
@@ -91,17 +92,6 @@ public class PcmAllSysSaveProductController extends BaseController{
 	private IPcmCreateProductService pcmCreateProductService;
 	@Autowired
 	private IJcoSAPUtil jcoUtils;
-   /* //超市百货商品下发LIST
-	List<PublishDTO> sidList = null;
-	List<PublishDTO> skusidList = null;
-	List<PublishDTO> spusidList = null;
-	//电商商品下发LIST
-	List<PublishDTO> sapSidList = null;
-	//不带要约的电商商品下发
-	List<PublishDTO> sapSidListOffernumIsNull =null;*/
-	/*List<PublishDTO> sapSkuSidList = null;
-	List<PublishDTO> sapSpuSidList = null;*/
-
 	/**
 	 * 导入终端上传商品
 	 * @Methods Name pullProductFromYongliPIS
@@ -111,13 +101,13 @@ public class PcmAllSysSaveProductController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/pullProductFromYongliPIS", method = RequestMethod.POST)
-	public String pullProductFromYongliPIS(@RequestBody MqRequestDataListPara<PullDataPara> para1) {
-		final MqRequestDataListPara<PullDataPara> para = para1;
+	public String pullProductFromYongliPIS(@RequestBody MqRequestDataListPara<PcmAllSysPullDataPara> para1) {
+		final MqRequestDataListPara<PcmAllSysPullDataPara> para = para1;
 		taskExecutor.execute(new Runnable() {
 			@Override
 			public void run() {
 				RequestHeader header = para.getHeader();
-				List<PullDataPara> data = para.getData();
+				List<PcmAllSysPullDataPara> data = para.getData();
 				List<PcmAllSysPullDataDto> listDataDto = new ArrayList<PcmAllSysPullDataDto>();
 				for (int i = 0; i < data.size(); i++) {
 					PcmAllSysPullDataDto dataDto = new PcmAllSysPullDataDto();
@@ -143,15 +133,6 @@ public class PcmAllSysSaveProductController extends BaseController{
 				final List<ResultPullDataDto> resList = new ArrayList<ResultPullDataDto>();
 				// 异常信息LIST
 				final List<ResultPullDataDto> excepList = new ArrayList<ResultPullDataDto>();
-				PublishDTO dt = new PublishDTO();
-				dt.setSid(1l);
-				PublishDTO dt1 = new PublishDTO();
-				dt1.setSid(2l);
-				PublishDTO dt2 = new PublishDTO();
-				dt2.setSid(3l);
-				sapSidList.add(dt);
-				sapSidList.add(dt2);
-				sapSidList.add(dt1);
 				System.out.println("------------------------------------------------导入终端---------------------------------------------------");
 				System.out.println(sapSidList.toString());
 				System.out.println("-----------------------------------------------------------------------------------------------------------");
@@ -160,6 +141,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 					resDto.setLineNumber(dataDto.getLineNumber());
 					String type = dataDto.getType();//商品业态
 					try {
+						dataDto.setSource("PIS");
 						PcmShoppeProduct result = allSysPullProductService
 								.allSysSaveProduct(dataDto,null);
 						if(result != null){
@@ -331,13 +313,13 @@ public class PcmAllSysSaveProductController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/pullProductFromSupllier", method = RequestMethod.POST)
-	public String pullProductFromSupllier(@RequestBody MqRequestDataListPara<PullDataPara> para1) {
-		final MqRequestDataListPara<PullDataPara> para = para1;
+	public String pullProductFromSupllier(@RequestBody MqRequestDataListPara<PcmAllSysPullDataPara> para1) {
+		final MqRequestDataListPara<PcmAllSysPullDataPara> para = para1;
 		taskExecutor.execute(new Runnable() {
 			@Override
 			public void run() {
 				RequestHeader header = para.getHeader();
-				List<PullDataPara> data = para.getData();
+				List<PcmAllSysPullDataPara> data = para.getData();
 				List<PcmAllSysPullDataDto> listDataDto = new ArrayList<PcmAllSysPullDataDto>();
 				for (int i = 0; i < data.size(); i++) {
 					PcmAllSysPullDataDto dataDto = new PcmAllSysPullDataDto();
@@ -363,15 +345,11 @@ public class PcmAllSysSaveProductController extends BaseController{
 				final List<PublishDTO> sapSidList = new ArrayList<PublishDTO>();
 				//不带要约的电商商品下发
 				final List<PublishDTO> sapSidListOffernumIsNull =new ArrayList<PublishDTO>();
-				PublishDTO dt = new PublishDTO();
-				dt.setSid(4l);
-				PublishDTO dt1 = new PublishDTO();
-				dt1.setSid(5l);
-				PublishDTO dt2 = new PublishDTO();
-				dt2.setSid(6l);
-				sapSidList.add(dt);
-				sapSidList.add(dt2);
-				sapSidList.add(dt1);
+				for(int i=1;i<10;i++){
+					PublishDTO dt = new PublishDTO();
+					dt.setSid(Long.valueOf(i));
+					sapSidList.add(dt);
+				}
 				System.out.println("------------------------------------------------供应商平台---------------------------------------------------");
 				System.out.println(sapSidList.toString());
 				System.out.println("-----------------------------------------------------------------------------------------------------------");
@@ -379,6 +357,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 					ResultPullDataForSupllierDto resDto = new ResultPullDataForSupllierDto();
 					resDto.setLineNumber(dataDto.getLineNumber());
 					try {
+						dataDto.setSource("SUP");
 						PcmShoppeProduct result = allSysPullProductService.allSysSaveProduct(dataDto, null);
 						if (result != null) {
 							if(!"2".equals(dataDto.getType())){//非电商商品按之前下发
