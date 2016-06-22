@@ -257,7 +257,7 @@ public class ValidProductController extends BaseController {
 						excepList.add(resDto);
 					} catch (Exception e) {
 						resDto.setMessageCode(Constants.PUBLIC_1);
-						resDto.setMessageName("商品已存在");
+						resDto.setMessageName("数据库操作异常,商品已存在");
 						excepList.add(resDto);
 					}
 					resList.add(resDto);
