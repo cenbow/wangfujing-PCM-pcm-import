@@ -181,9 +181,9 @@ public class PcmStockImportController extends BaseController {
 			stockPushEdi(proList);
 			if (proList != null && proList.size() > 0) {
 				List<PcmStockWcsPara> wcsList2 = new ArrayList<PcmStockWcsPara>();
-				for (PcmStockPara para : paraList) {
+				for (PcmStockDto para : list) {
 					PcmStockWcsPara wcs = new PcmStockWcsPara();
-					wcs.setFlag("XK");
+					wcs.setFlag("2");
 					wcs.setMatnr(para.getSupplyProductId());
 					wcs.setNum(para.getInventory().toString());
 					if (para.getType().equals(Constants.PCMSTOCK_TYPE_ALL)) {

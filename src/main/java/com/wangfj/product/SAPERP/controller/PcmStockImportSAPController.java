@@ -155,12 +155,12 @@ public class PcmStockImportSAPController {
 					stockPushEdi(proList);
 					if (proList != null && proList.size() > 0) {
 						List<PcmStockWcsPara> wcsList2 = new ArrayList<PcmStockWcsPara>();
-						for (PcmStockPara para : paraList) {
+						for (PcmStockDto para : list) {
 							PcmStockWcsPara wcs = new PcmStockWcsPara();
-							wcs.setFlag("ZK");
-							wcs.setMatnr(para.getSUPPLYPRODUCTID());
-							wcs.setNum(para.getINVENTORY().toString());
-							if (para.getTYPE().equals(Constants.PCMSTOCK_TYPE_ALL)) {
+							wcs.setFlag("1");
+							wcs.setMatnr(para.getSupplyProductId());
+							wcs.setNum(para.getInventory().toString());
+							if (para.getType().equals(Constants.PCMSTOCK_TYPE_ALL)) {
 								wcs.setType("1");
 							} else {
 								wcs.setType("2");
