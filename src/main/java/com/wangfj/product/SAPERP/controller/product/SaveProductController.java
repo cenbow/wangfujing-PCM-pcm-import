@@ -336,7 +336,7 @@ public class SaveProductController extends BaseController {
 							Map<String, Object> resMap = new HashMap<String, Object>();
 							resMap.put("KEY_FIELD", sapPara.getMATNR());
 							resMap.put("FLAG", 0);
-							resMap.put("MESSAGE", "商品重复或者字段长度过长");
+							resMap.put("MESSAGE", "数据库操作异常,商品已存在");
 							resList.add(resMap);
 							excepList.add(resMap);
 						}
@@ -397,7 +397,7 @@ public class SaveProductController extends BaseController {
 							Map<String, Object> resMap = new HashMap<String, Object>();
 							resMap.put("KEY_FIELD", sapPara.getMATNR());
 							resMap.put("FLAG", 0);
-							resMap.put("MESSAGE", "商品重复或者字段长度过长");
+							resMap.put("MESSAGE", "数据库操作异常,商品已存在");
 							resList.add(resMap);
 							excepList.add(resMap);
 						}
