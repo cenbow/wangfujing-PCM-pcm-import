@@ -28,6 +28,7 @@ import com.wangfj.core.utils.JsonUtil;
 import com.wangfj.core.utils.PropertyUtil;
 import com.wangfj.core.utils.ThrowExcetpionUtil;
 import com.wangfj.product.PAD.controller.support.PcmEdiProductStockPara;
+import com.wangfj.product.PAD.controller.support.PcmStockWcsPara;
 import com.wangfj.product.SAPERP.controller.support.PcmStockPara;
 import com.wangfj.product.common.domain.vo.PcmExceptionLogDto;
 import com.wangfj.product.common.service.intf.IPcmExceptionLogService;
@@ -117,8 +118,7 @@ public class PcmStockImportSAPController {
 								e.printStackTrace();
 							}
 						}
-						if (dto.getDefectiveInventory() != null
-								&& dto.getDefectiveInventory() != 0) {
+						if (dto.getDefectiveInventory() != null && dto.getDefectiveInventory() != 0) {
 							PcmStockDto DefIDto = new PcmStockDto();
 							try {
 								BeanUtils.copyProperties(DefIDto, dto);
@@ -153,7 +153,22 @@ public class PcmStockImportSAPController {
 
 					// 库存下发
 					stockPushEdi(proList);
-
+					if (proList != null && proList.size() > 0) {
+						List<PcmStockWcsPara> wcsList2 = new ArrayList<PcmStockWcsPara>();
+						for (PcmStockPara para : paraList) {
+							PcmStockWcsPara wcs = new PcmStockWcsPara();
+							wcs.setFlag("ZK");
+							wcs.setMatnr(para.getSUPPLYPRODUCTID());
+							wcs.setNum(para.getINVENTORY().toString());
+							if (para.getTYPE().equals(Constants.PCMSTOCK_TYPE_ALL)) {
+								wcs.setType("1");
+							} else {
+								wcs.setType("2");
+							}
+							wcsList2.add(wcs);
+						}
+						stockPushWcs(wcsList2);
+					}
 					if (resultMapList != null && resultMapList.size() > 0) {
 						taskExecutor.execute(new Runnable() {
 							@Override
@@ -164,8 +179,8 @@ public class PcmStockImportSAPController {
 									JcoSAPUtils.functionExecute("ZFM_MD_PCM2SAP_ERROR_IN", "INPUT",
 											resultMapList);
 								} catch (Exception e) {
-									logger.error(
-											"API,importProPriceInfo.htm,Error:" + e.getMessage());
+									logger.error("API,importProPriceInfo.htm,Error:"
+											+ e.getMessage());
 								}
 							}
 						});
@@ -242,6 +257,28 @@ public class PcmStockImportSAPController {
 			pcmExceptionLogService.saveExceptionLogInfo(dto);
 		} catch (Exception e) {
 			logger.info("API,Save PcmExceptionLogDto failed:" + e.getMessage());
+		}
+	}
+
+	/**
+	 * 库存下发
+	 * 
+	 * @Methods Name stockPushWcs
+	 * @Create In 2016年6月20日 By yedong
+	 * @param proList
+	 *            void
+	 */
+	public void stockPushWcs(List<PcmStockWcsPara> paraList) {
+		try {
+			String wcsStockUrl = PropertyUtil.getSystemUrl("wcs.stock");
+			logger.info("API,synPushStockToWCS,request:" + paraList.toString());
+			String response = HttpUtil.doPost(wcsStockUrl, JsonUtil.getJSONString(paraList));
+			logger.info("API,synPushStockToWCS,response:" + response);
+		} catch (Exception e) {
+			logger.error("API,synPushStockToWCS,Error:" + e.getMessage());
+			ThrowExcetpionUtil.splitExcetpion(new BleException(ErrorCode.STOCK_IMPORT_PUSH_ERROR
+					.getErrorCode(), ErrorCode.STOCK_IMPORT_PUSH_ERROR.getMemo() + e.getMessage()));
+			SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(paraList));
 		}
 	}
 
