@@ -7,6 +7,7 @@
  */
 package com.wangfj.product.core.controller;
 
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -599,7 +600,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 							Map<String, Object> resMap = new HashMap<String, Object>();
 							resMap.put("KEY_FIELD", sapPara.getMATNR());
 							resMap.put("FLAG", 0);
-							resMap.put("MESSAGE", "商品重复或者字段长度过长");
+							resMap.put("MESSAGE", "数据库操作异常,商品重复");
 							resList.add(resMap);
 							excepList.add(resMap);
 						}
@@ -652,7 +653,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 							Map<String, Object> resMap = new HashMap<String, Object>();
 							resMap.put("KEY_FIELD", sapPara.getMATNR());
 							resMap.put("FLAG", 0);
-							resMap.put("MESSAGE", "商品重复或者字段长度过长");
+							resMap.put("MESSAGE", "数据库操作异常,商品重复");
 							resList.add(resMap);
 							excepList.add(resMap);
 						}
@@ -774,7 +775,8 @@ public class PcmAllSysSaveProductController extends BaseController{
 		dto.setSalePrice(para.getZSPRICE());// 售价
 		dto.setProColor(para.getCOLORSID());// 色系
 		dto.setUnitCode(para.getUNIT());// 销售单位
-		dto.setFinalClassiFicationCode(para.getSCATE());
+		dto.setFinalClassiFicationCode(para.getSCATE());//统计分类
+		dto.setSource("SAP");
 		return dto;
 	}
 
