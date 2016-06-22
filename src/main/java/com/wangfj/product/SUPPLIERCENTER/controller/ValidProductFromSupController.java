@@ -191,6 +191,11 @@ public class ValidProductFromSupController {
 						resDto.setMessageName(e.getCode() + " " + e.getMessage());
 						resDto.setImportNo(dataDto.getImportNo());//批次号
 						excepList.add(resDto);
+					} catch (Exception e) {
+						resDto.setMessageCode(Constants.PUBLIC_1);
+						resDto.setMessageName("数据库操作异常,商品已存在");
+						resDto.setImportNo(dataDto.getImportNo());//批次号
+						excepList.add(resDto);
 					}
 					resList.add(resDto);
 				}
