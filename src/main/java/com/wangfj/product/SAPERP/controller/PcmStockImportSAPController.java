@@ -159,7 +159,7 @@ public class PcmStockImportSAPController {
 							PcmStockWcsPara wcs = new PcmStockWcsPara();
 							wcs.setFlag("1");
 							wcs.setMatnr(para.getSupplyProductId());
-							wcs.setNum(para.getInventory().toString());
+							wcs.setNum(para.getInventory());
 							if (para.getType().equals(Constants.PCMSTOCK_TYPE_ALL)) {
 								wcs.setType("1");
 							} else {

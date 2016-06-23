@@ -3,7 +3,7 @@ package com.wangfj.product.PAD.controller.support;
 public class PcmStockWcsPara {
 	private String type;// 操作类型
 	private String matnr;// 商品编码
-	private String num;// 操作数量
+	private Integer num;// 操作数量
 	private String flag;// 库标识
 
 	public String getType() {
@@ -22,11 +22,11 @@ public class PcmStockWcsPara {
 		this.matnr = matnr;
 	}
 
-	public String getNum() {
+	public Integer getNum() {
 		return num;
 	}
 
-	public void setNum(String num) {
+	public void setNum(Integer num) {
 		this.num = num;
 	}
 

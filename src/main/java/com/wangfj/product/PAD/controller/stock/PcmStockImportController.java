@@ -185,7 +185,7 @@ public class PcmStockImportController extends BaseController {
 					PcmStockWcsPara wcs = new PcmStockWcsPara();
 					wcs.setFlag("2");
 					wcs.setMatnr(para.getSupplyProductId());
-					wcs.setNum(para.getInventory().toString());
+					wcs.setNum(para.getInventory());
 					if (para.getType().equals(Constants.PCMSTOCK_TYPE_ALL)) {
 						wcs.setType("1");
 					} else {
