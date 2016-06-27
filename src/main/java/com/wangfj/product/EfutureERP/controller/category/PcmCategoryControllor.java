@@ -140,10 +140,10 @@ public class PcmCategoryControllor extends BaseController {
 					throw new BleException(ErrorCode.DATA_OPER_ERROR.getErrorCode(),
 							ErrorCode.DATA_OPER_ERROR.getMemo());
 				} else {
-					parentSid = insert.getCategorySid();
+					parentSid = insert.getSid()+"";
 				}
 			} else {
-				parentSid = list1.get(0).getCategorySid();
+				parentSid = list1.get(0).getSid()+"";
 			}
 			// 添加分类
 			for (int i = 0; i < lists.size(); i++) {
