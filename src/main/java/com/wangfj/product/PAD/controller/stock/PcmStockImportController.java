@@ -282,6 +282,24 @@ public class PcmStockImportController extends BaseController {
 
 					// 库存下发
 					stockPushEdi(proList);
+					if (proList != null && proList.size() > 0
+							&& FlagType.getPublish_info() == Constants.PUBLIC_0) {
+						List<PcmStockWcsPara> wcsList2 = new ArrayList<PcmStockWcsPara>();
+						for (PcmStockDto para : list) {
+							PcmStockWcsPara wcs = new PcmStockWcsPara();
+							wcs.setFlag("2");
+							wcs.setMatnr(para.getSupplyProductId());
+							wcs.setNum(para.getInventory());
+							if (para.getType().equals(Constants.PCMSTOCK_TYPE_ALL)) {
+								wcs.setType("1");
+							} else {
+								wcs.setType("2");
+							}
+							wcsList2.add(wcs);
+						}
+						stockPushWcs(wcsList2);
+					}
+					
 					RequestMsg = JsonUtil.getJSONString(list1);
 					logger.info("API,findStockImportFromPcm.htm,callBackUrl:" + callBackUrl
 							+ ",request:" + RequestMsg);
