@@ -148,6 +148,7 @@ public class PcmStockImportSAPController {
 							} catch (BleException e) {
 								resultMapList.add(getResultMap(pcmStockDto.getShoppeProSid(),
 										e.getCode(), e.getMessage()));
+								SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(pcmStockDto));
 							}
 						}
 					}
@@ -183,6 +184,7 @@ public class PcmStockImportSAPController {
 								} catch (Exception e) {
 									logger.error("API,importProPriceInfo.htm,Error:"
 											+ e.getMessage());
+									SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(resultMapList));
 								}
 							}
 						});

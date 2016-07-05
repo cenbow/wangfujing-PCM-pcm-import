@@ -163,6 +163,7 @@ public class PcmStockImportController extends BaseController {
 							resultMap.put("success", dto.getSuccess());
 							resultMap.put("errorCode", dto.getErrorCode());
 							resultMap.put("errorMsg", dto.getException());
+							SavaErrorMessage(dto.getException(), JsonUtil.getJSONString(pcmStockDto));
 						}
 					} catch (BleException e) {
 						pcmStockDto.setErrorCode(e.getCode());
@@ -172,6 +173,7 @@ public class PcmStockImportController extends BaseController {
 						resultMap.put("supplyProductId", pcmStockDto.getShoppeProSid());
 						resultMap.put("errorCode", e.getCode());
 						resultMap.put("errorMsg", e.getMessage());
+						SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(pcmStockDto));
 					}
 					list1.add(pcmStockDto);
 					result.add(resultMap);
@@ -272,6 +274,7 @@ public class PcmStockImportController extends BaseController {
 								pcmStockDto.setErrorCode(e.getCode());
 								pcmStockDto.setException(e.getMessage());
 								pcmStockDto.setSuccess(Constants.FAILURE);
+								SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(pcmStockDto));
 							}
 							list1.add(pcmStockDto);
 						}
