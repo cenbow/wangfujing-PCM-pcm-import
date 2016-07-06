@@ -248,6 +248,7 @@ public class PcmStockImportController extends BaseController {
 			@Override
 			public void run() {
 				try {
+					String source = "";
 					List<PcmStockPara> paraList = new ArrayList<PcmStockPara>();
 					paraList = mqpara.getData();
 					String callBackUrl = StringUtils.EMPTY;
@@ -278,6 +279,9 @@ public class PcmStockImportController extends BaseController {
 							}
 							list1.add(pcmStockDto);
 						}
+						if(list.size() != 0){
+							source = list.get(0).getSource();
+						}
 					}
 
 					// 库存下发
@@ -287,7 +291,11 @@ public class PcmStockImportController extends BaseController {
 						List<PcmStockWcsPara> wcsList2 = new ArrayList<PcmStockWcsPara>();
 						for (PcmStockDto para : list) {
 							PcmStockWcsPara wcs = new PcmStockWcsPara();
-							wcs.setFlag("2");
+							if(Constants.SUPPLIERCENTER.equals(source)){
+								wcs.setFlag("2");
+							} else {
+								wcs.setFlag("1");
+							}
 							wcs.setMatnr(para.getSupplyProductId());
 							wcs.setNum(para.getInventory());
 							if (para.getType().equals(Constants.PCMSTOCK_TYPE_ALL)) {
