@@ -31,7 +31,6 @@ public class TestShoppeProductSupplyMapper {
 		try {
 			r = pcmShoppeProductSupplyMapper.insertSelective(p);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println(r);

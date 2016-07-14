@@ -3,7 +3,6 @@
  * @Path: com.wangfj.product.SUPPLIERCENTER.controller.supportSupplierBarCodeFromSup.java
  * @Create By wangc
  * @Create In 2016-3-2 下午1:54:56
- * TODO
  */
 package com.wangfj.product.SUPPLIERCENTER.controller.support;
 
