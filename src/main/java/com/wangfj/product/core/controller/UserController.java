@@ -149,7 +149,6 @@ public class UserController extends BaseController {
 
 			System.err.println(RESULT);
 		} catch (JCoException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
@@ -178,7 +177,6 @@ public class UserController extends BaseController {
 
 			System.err.println(RESULT);
 		} catch (JCoException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
