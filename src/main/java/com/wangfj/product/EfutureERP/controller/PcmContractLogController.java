@@ -73,10 +73,8 @@ public class PcmContractLogController extends BaseController {
 				try {
 					BeanUtils.copyProperties(pcmContractLogPara, contracts.get(i));
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				PcmContractLogDto pcmContractLogDto = new PcmContractLogDto();

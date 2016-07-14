@@ -59,10 +59,8 @@ public class PcmOrganizationMainController extends BaseController {
 		try {
 			publishOrganization = pcmOrganizationService.findOrganizationByParamFromPcm(map);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return JsonUtil.getJSONString(publishOrganization);
@@ -98,10 +96,8 @@ public class PcmOrganizationMainController extends BaseController {
 		try {
 			publishOrganization = pcmOrganizationService.findOrganizationByParamFromPcm(map);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return JsonUtil.getJSONString(publishOrganization);

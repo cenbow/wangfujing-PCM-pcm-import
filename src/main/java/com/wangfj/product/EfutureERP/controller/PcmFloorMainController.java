@@ -44,10 +44,8 @@ public class PcmFloorMainController extends BaseController {
 		try {
 			findFloor = pcmFloorService.findFloorByParamFromPcm(paramMap);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return JsonUtil.getJSONString(findFloor);
