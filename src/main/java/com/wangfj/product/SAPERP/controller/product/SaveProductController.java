@@ -293,9 +293,8 @@ public class SaveProductController extends BaseController {
 								resList.add(resMap);
 								continue;
 							}
-							validProductService.updateProductContract(sapPara.getS_MATNR(),
-									sapPara.getMATNR(), sapPara.getOFFERNUMBER());
-
+							/*validProductService.updateProductContract(sapPara.getS_MATNR(),
+									sapPara.getMATNR(), sapPara.getOFFERNUMBER());*/
 							// 修改专柜商品属性
 							PullDataDto dataDto = createProductDto(sapPara); // 专柜商品信息
 							PcmShoppeProductExtend extendDto = createExtendDto(sapPara); // 扩展表信息
@@ -303,7 +302,7 @@ public class SaveProductController extends BaseController {
 							dataDto.setType("2");// 业态表示 0百货 1超市 2电商
 							dataDto.setOfferNumber(sapPara.getOFFERNUMBER());
 							PcmShoppeProduct result = pcmCreateProductService
-									.updateSProductBySProductCode(dataDto, extendDto, shoppeProSid);
+									.updateSProductBySProductCode2(dataDto, extendDto, shoppeProSid);
 							if (result != null) {
 								// 下发专柜商品
 								publishDto = new PublishDTO();

@@ -6,6 +6,8 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,12 +15,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sap.conn.jco.JCoDestination;
+import com.sap.conn.jco.JCoException;
+import com.sap.conn.jco.JCoFunction;
+import com.sap.conn.jco.JCoParameterList;
 import com.wangfj.core.framework.base.controller.BaseController;
 import com.wangfj.core.framework.base.page.Page;
 import com.wangfj.core.framework.exception.BleException;
 import com.wangfj.core.utils.DataUtil;
 import com.wangfj.core.utils.DateUtil;
 import com.wangfj.core.utils.ResultUtil;
+import com.wangfj.product.constants.ConnectSAPServer;
 import com.wangfj.product.core.controller.support.SelectUserPagePara;
 import com.wangfj.product.core.controller.support.UpdateUsersPara;
 import com.wangfj.product.core.controller.support.UsersPara;
@@ -35,6 +42,7 @@ public class UserController extends BaseController {
 	private UserService userService;
 
 	private static String dateFormateStr = "yyyy-MM-dd HH:mm:ss";
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	/**
 	 * 
@@ -118,5 +126,60 @@ public class UserController extends BaseController {
 			throw new BleException("01", "测试异常");
 		}
 		return ResultUtil.creComSucResult(page);
+	}
+
+	@RequestMapping("/testJCO2")
+	@ResponseBody
+	public Map<String, Object> testJCO2() throws Exception {
+		logger.info("start");
+		JCoDestination jCoDestination = ConnectSAPServer.Connect();
+
+		JCoFunction function;
+		String RESULT = "";
+		try {
+			function = jCoDestination.getRepository().getFunction("Z_SOAP_TEST");
+			if (function == null)
+				throw new RuntimeException("Z_SOAP_TEST not found in SAP.");
+			function.getImportParameterList().setValue("USER_LOGIN", "test10");
+			function.execute(jCoDestination);
+			// Object returnTable =
+			// function.getTableParameterList().getValue("RESULT");
+			JCoParameterList exportParam = function.getExportParameterList();
+			RESULT = exportParam.getString("USER");
+
+			System.err.println(RESULT);
+		} catch (JCoException e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+		}
+		return ResultUtil.creComSucResult(RESULT);
+	}
+
+	@RequestMapping("/testJCO")
+	@ResponseBody
+	public Map<String, Object> testJCO() throws Exception {
+		JCoDestination jCoDestination = ConnectSAPServer.Connect();
+
+		JCoFunction function;
+		String RESULT = "";
+		try {
+			function = jCoDestination.getRepository().getFunction("ZSAP_CALCULATE");
+			if (function == null)
+				throw new RuntimeException("ZSAP_CALCULATE not found in SAP.");
+			function.getImportParameterList().setValue("NUMBER1", "10");
+			function.getImportParameterList().setValue("NUMBER2", "1");
+			function.getImportParameterList().setValue("OPERATOR", "+");
+			function.execute(jCoDestination);
+			// Object returnTable =
+			// function.getTableParameterList().getValue("RESULT");
+			JCoParameterList exportParam = function.getExportParameterList();
+			RESULT = exportParam.getString("RESULT");
+
+			System.err.println(RESULT);
+		} catch (JCoException e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+		}
+		return ResultUtil.creComSucResult(RESULT);
 	}
 }

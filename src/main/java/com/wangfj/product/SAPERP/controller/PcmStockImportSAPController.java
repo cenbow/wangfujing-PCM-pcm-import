@@ -32,6 +32,7 @@ import com.wangfj.product.PAD.controller.support.PcmStockWcsPara;
 import com.wangfj.product.SAPERP.controller.support.PcmStockPara;
 import com.wangfj.product.common.domain.vo.PcmExceptionLogDto;
 import com.wangfj.product.common.service.intf.IPcmExceptionLogService;
+import com.wangfj.product.constants.FlagType;
 import com.wangfj.product.constants.JcoSAPUtils;
 import com.wangfj.product.constants.StatusCodeConstants.StatusCode;
 import com.wangfj.product.stocks.domain.vo.PcmStockDto;
@@ -147,13 +148,15 @@ public class PcmStockImportSAPController {
 							} catch (BleException e) {
 								resultMapList.add(getResultMap(pcmStockDto.getShoppeProSid(),
 										e.getCode(), e.getMessage()));
+								SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(pcmStockDto));
 							}
 						}
 					}
 
 					// 库存下发
 					stockPushEdi(proList);
-					if (proList != null && proList.size() > 0) {
+					if (proList != null && proList.size() > 0
+							&& FlagType.getPublish_info() == Constants.PUBLIC_0) {
 						List<PcmStockWcsPara> wcsList2 = new ArrayList<PcmStockWcsPara>();
 						for (PcmStockDto para : list) {
 							PcmStockWcsPara wcs = new PcmStockWcsPara();
@@ -181,6 +184,7 @@ public class PcmStockImportSAPController {
 								} catch (Exception e) {
 									logger.error("API,importProPriceInfo.htm,Error:"
 											+ e.getMessage());
+									SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(resultMapList));
 								}
 							}
 						});

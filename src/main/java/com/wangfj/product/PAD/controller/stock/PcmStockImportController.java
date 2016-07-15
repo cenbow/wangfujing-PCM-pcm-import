@@ -38,6 +38,7 @@ import com.wangfj.product.PAD.controller.support.PcmStockResultPara;
 import com.wangfj.product.PAD.controller.support.PcmStockWcsPara;
 import com.wangfj.product.common.domain.vo.PcmExceptionLogDto;
 import com.wangfj.product.common.service.intf.IPcmExceptionLogService;
+import com.wangfj.product.constants.FlagType;
 import com.wangfj.product.constants.StatusCodeConstants.StatusCode;
 import com.wangfj.product.stocks.domain.vo.PcmStockDto;
 import com.wangfj.product.stocks.service.intf.IPcmStockService;
@@ -162,6 +163,7 @@ public class PcmStockImportController extends BaseController {
 							resultMap.put("success", dto.getSuccess());
 							resultMap.put("errorCode", dto.getErrorCode());
 							resultMap.put("errorMsg", dto.getException());
+							SavaErrorMessage(dto.getException(), JsonUtil.getJSONString(pcmStockDto));
 						}
 					} catch (BleException e) {
 						pcmStockDto.setErrorCode(e.getCode());
@@ -171,6 +173,7 @@ public class PcmStockImportController extends BaseController {
 						resultMap.put("supplyProductId", pcmStockDto.getShoppeProSid());
 						resultMap.put("errorCode", e.getCode());
 						resultMap.put("errorMsg", e.getMessage());
+						SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(pcmStockDto));
 					}
 					list1.add(pcmStockDto);
 					result.add(resultMap);
@@ -179,7 +182,8 @@ public class PcmStockImportController extends BaseController {
 
 			// 库存下发
 			stockPushEdi(proList);
-			if (proList != null && proList.size() > 0) {
+			if (proList != null && proList.size() > 0
+					&& FlagType.getPublish_info() == Constants.PUBLIC_0) {
 				List<PcmStockWcsPara> wcsList2 = new ArrayList<PcmStockWcsPara>();
 				for (PcmStockDto para : list) {
 					PcmStockWcsPara wcs = new PcmStockWcsPara();
@@ -244,6 +248,7 @@ public class PcmStockImportController extends BaseController {
 			@Override
 			public void run() {
 				try {
+					String source = "";
 					List<PcmStockPara> paraList = new ArrayList<PcmStockPara>();
 					paraList = mqpara.getData();
 					String callBackUrl = StringUtils.EMPTY;
@@ -270,13 +275,39 @@ public class PcmStockImportController extends BaseController {
 								pcmStockDto.setErrorCode(e.getCode());
 								pcmStockDto.setException(e.getMessage());
 								pcmStockDto.setSuccess(Constants.FAILURE);
+								SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(pcmStockDto));
 							}
 							list1.add(pcmStockDto);
+						}
+						if(list.size() != 0){
+							source = list.get(0).getSource();
 						}
 					}
 
 					// 库存下发
 					stockPushEdi(proList);
+					if (proList != null && proList.size() > 0
+							&& FlagType.getPublish_info() == Constants.PUBLIC_0) {
+						List<PcmStockWcsPara> wcsList2 = new ArrayList<PcmStockWcsPara>();
+						for (PcmStockDto para : list) {
+							PcmStockWcsPara wcs = new PcmStockWcsPara();
+							if(Constants.SUPPLIERCENTER.equals(source)){
+								wcs.setFlag("2");
+							} else {
+								wcs.setFlag("1");
+							}
+							wcs.setMatnr(para.getSupplyProductId());
+							wcs.setNum(para.getInventory());
+							if (para.getType().equals(Constants.PCMSTOCK_TYPE_ALL)) {
+								wcs.setType("1");
+							} else {
+								wcs.setType("2");
+							}
+							wcsList2.add(wcs);
+						}
+						stockPushWcs(wcsList2);
+					}
+					
 					RequestMsg = JsonUtil.getJSONString(list1);
 					logger.info("API,findStockImportFromPcm.htm,callBackUrl:" + callBackUrl
 							+ ",request:" + RequestMsg);
