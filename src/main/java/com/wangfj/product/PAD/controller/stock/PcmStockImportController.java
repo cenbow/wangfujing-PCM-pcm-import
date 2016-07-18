@@ -161,6 +161,7 @@ public class PcmStockImportController extends BaseController {
 									dto.getChannelSid());
 						} else {
 							resultMap.put("success", dto.getSuccess());
+							resultMap.put("supplyProductId", dto.getShoppeProSid());
 							resultMap.put("errorCode", dto.getErrorCode());
 							resultMap.put("errorMsg", dto.getException());
 							SavaErrorMessage(dto.getException(), JsonUtil.getJSONString(pcmStockDto));
