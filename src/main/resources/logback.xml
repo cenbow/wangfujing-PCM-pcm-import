@@ -59,7 +59,7 @@
 		<appender-ref ref="STDOUT" />
 	</logger>
 	<logger name="com.wangfj" additivity="false">
-		<level value="DEBUG" />
+		<level value="${log.level}" />
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="ASYNC" />
 	</logger>

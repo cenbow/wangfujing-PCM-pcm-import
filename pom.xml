@@ -131,6 +131,7 @@
 					<include>application.properties</include>
 					<include>system.properties</include>
 					<include>wfj-netty.properties</include>
+					<include>logback.xml</include>
 					<include>nettyserver.xml</include>
 				</includes>
 				<filtering>true</filtering>
