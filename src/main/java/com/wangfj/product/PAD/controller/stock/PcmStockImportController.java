@@ -164,7 +164,8 @@ public class PcmStockImportController extends BaseController {
 							resultMap.put("supplyProductId", dto.getShoppeProSid());
 							resultMap.put("errorCode", dto.getErrorCode());
 							resultMap.put("errorMsg", dto.getException());
-							SavaErrorMessage(dto.getException(), JsonUtil.getJSONString(pcmStockDto));
+							SavaErrorMessage(dto.getException(),
+									JsonUtil.getJSONString(pcmStockDto));
 						}
 					} catch (BleException e) {
 						pcmStockDto.setErrorCode(e.getCode());
@@ -224,8 +225,9 @@ public class PcmStockImportController extends BaseController {
 			logger.info("API,synPushStockToWCS,response:" + response);
 		} catch (Exception e) {
 			logger.error("API,synPushStockToWCS,Error:" + e.getMessage());
-			ThrowExcetpionUtil.splitExcetpion(new BleException(ErrorCode.STOCK_IMPORT_PUSH_ERROR
-					.getErrorCode(), ErrorCode.STOCK_IMPORT_PUSH_ERROR.getMemo() + e.getMessage()));
+			ThrowExcetpionUtil.splitExcetpion(
+					new BleException(ErrorCode.STOCK_IMPORT_PUSH_ERROR.getErrorCode(),
+							ErrorCode.STOCK_IMPORT_PUSH_ERROR.getMemo() + e.getMessage()));
 			SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(paraList));
 		}
 	}
@@ -276,11 +278,12 @@ public class PcmStockImportController extends BaseController {
 								pcmStockDto.setErrorCode(e.getCode());
 								pcmStockDto.setException(e.getMessage());
 								pcmStockDto.setSuccess(Constants.FAILURE);
-								SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(pcmStockDto));
+								SavaErrorMessage(e.getMessage(),
+										JsonUtil.getJSONString(pcmStockDto));
 							}
 							list1.add(pcmStockDto);
 						}
-						if(list.size() != 0){
+						if (list.size() != 0) {
 							source = list.get(0).getSource();
 						}
 					}
@@ -292,7 +295,7 @@ public class PcmStockImportController extends BaseController {
 						List<PcmStockWcsPara> wcsList2 = new ArrayList<PcmStockWcsPara>();
 						for (PcmStockDto para : list) {
 							PcmStockWcsPara wcs = new PcmStockWcsPara();
-							if(Constants.SUPPLIERCENTER.equals(source)){
+							if (Constants.SUPPLIERCENTER.equals(source)) {
 								wcs.setFlag("2");
 							} else {
 								wcs.setFlag("1");
@@ -308,12 +311,12 @@ public class PcmStockImportController extends BaseController {
 						}
 						stockPushWcs(wcsList2);
 					}
-					
+
 					RequestMsg = JsonUtil.getJSONString(list1);
-					logger.info("API,findStockImportFromPcm.htm,callBackUrl:" + callBackUrl
+					logger.warn("API,findStockImportFromPcm.htm,callBackUrl:" + callBackUrl
 							+ ",request:" + RequestMsg);
 					String response = HttpUtil.doPost(callBackUrl, RequestMsg);
-					logger.info("API,findStockImportFromPcm.htm,callBackUrl,response:" + response);
+					logger.warn("API,findStockImportFromPcm.htm,callBackUrl,response:" + response);
 				} catch (Exception e) {
 					logger.error("API,findStockImportFromPcm.htm,Error:" + e.getMessage());
 				}
@@ -376,7 +379,8 @@ public class PcmStockImportController extends BaseController {
 								e.printStackTrace();
 							}
 						}
-						if (dto.getDefectiveInventory() != null && dto.getDefectiveInventory() != 0) {
+						if (dto.getDefectiveInventory() != null
+								&& dto.getDefectiveInventory() != 0) {
 							PcmStockDto DefIDto = new PcmStockDto();
 							try {
 								BeanUtils.copyProperties(DefIDto, dto);
