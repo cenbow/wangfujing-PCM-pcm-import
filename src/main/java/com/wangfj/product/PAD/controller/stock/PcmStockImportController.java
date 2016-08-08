@@ -278,7 +278,7 @@ public class PcmStockImportController extends BaseController {
 								pcmStockDto.setErrorCode(e.getCode());
 								pcmStockDto.setException(e.getMessage());
 								pcmStockDto.setSuccess(Constants.FAILURE);
-								SavaErrorMessage(e.getMessage(),
+								SavaErrorMessage(e.getMessage()+JsonUtil.getJSONString(pcmStockDto),
 										JsonUtil.getJSONString(pcmStockDto));
 							}
 							list1.add(pcmStockDto);
