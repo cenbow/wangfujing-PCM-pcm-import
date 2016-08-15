@@ -6,7 +6,6 @@
  */
 package com.wangfj.product.EfutureERP.controller.category;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -167,11 +166,7 @@ public class PcmCategoryControllor extends BaseController {
 					catedto.setCategoryType(Constants.PUBLIC_1);
 					catedto.setCreateTime(new Date());
 					catedto.setName(catep.getNAME());
-					if ("0".equals(catep.getSJCODE())) {
-						catedto.setParentSid(parentSid);
-					} else {
-						catedto.setParentSid(catep.getSJCODE());
-					}
+					catedto.setParentSid(catep.getSJCODE());
 					catedto.setIsLeaf(catep.getFLAG());
 					catedto.setLevel(Integer.parseInt(catep.getTYPE()));
 					catedto.setStatus(catep.getSTATUS());
@@ -186,7 +181,7 @@ public class PcmCategoryControllor extends BaseController {
 					}
 				}
 				try {
-					s = categoryManageService.uploadeManagerCategory(catedto);
+					s = categoryManageService.uploadManagerCateFromErp(catedto);
 					if (s.equals(Constants.ADDSUCCESS) || s.equals(Constants.UPDATESUCCESS)) {
 						publishList.add(catep);
 						continue;
@@ -214,7 +209,7 @@ public class PcmCategoryControllor extends BaseController {
 						try {
 							logger.info("API,addManageCategoryTOEp.htm,synPushToERP,request:"
 									+ publish.toString());
-							String response = HttpUtil.doPost(pushToeFuture, publish.toString().replaceAll("storeCode", "StoreCode"));
+							String response = HttpUtil.doPost(pushToeFuture, publish.toString());
 							logger.info("API,addManageCategoryTOEp.htm,synPushToERP,response:"
 									+ response);
 
@@ -317,9 +312,7 @@ public class PcmCategoryControllor extends BaseController {
 			HttpServletRequest request) throws IllegalAccessException, InvocationTargetException {
 		String s = "";
 		PcmAddCategoryDto catedto = new PcmAddCategoryDto();
-//		JSONObject js = JSONObject.fromObject(mqlist.getData());
 		JSONArray sq = JSONArray.fromObject(mqlist.getData());
-		//JSONArray sq = JSONArray.fromObject(mqlist.getData());
 		List<CopyToCategoryPara> lists = new ArrayList<CopyToCategoryPara>();
 		
 		for(Object o : sq){
@@ -401,7 +394,7 @@ public class PcmCategoryControllor extends BaseController {
 				catedto.setCreateTime(new Date());
 				catedto.setName(catep.getNAME());
 				if ("0".equals(catep.getSJCODE())) {
-					catedto.setParentSid(parentSid);
+					catedto.setParentSid("0");
 				} else {
 					catedto.setParentSid(catep.getSJCODE());
 				}
@@ -413,7 +406,7 @@ public class PcmCategoryControllor extends BaseController {
 				catedto.setIsSelfBuilt(0);
 				catedto.setIsMarket(Constants.PUBLIC_2 + "");
 				try {
-					s = categoryManageService.uploadeManagerCategoryDS(catedto);
+					s = categoryManageService.uploadManagerCateFromSap(catedto);
 					if (s.equals(Constants.ADDSUCCESS) || s.equals(Constants.UPDATESUCCESS)) {
 						publishList.add(catep);
 						continue;
@@ -441,7 +434,7 @@ public class PcmCategoryControllor extends BaseController {
 						try {
 							logger.info("API,addManageCategoryTOEp.htm,synPushToERP,request:"
 									+ publish.toString());
-							String response = HttpUtil.doPost(pushToeFuture, publish.toString().replaceAll("storeCode", "StoreCode"));
+							String response = HttpUtil.doPost(pushToeFuture, publish.toString());
 							logger.info("API,addManageCategoryTOEp.htm,synPushToERP,response:"
 									+ response);
 
