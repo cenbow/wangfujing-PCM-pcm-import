@@ -301,6 +301,10 @@ public class SaveProductController extends BaseController {
 							String shoppeProSid = sapPara.getS_MATNR(); // 已有专柜商品编码
 							dataDto.setType("2");// 业态表示 0百货 1超市 2电商
 							dataDto.setOfferNumber(sapPara.getOFFERNUMBER());
+							Map<String, Object> paramMap = new HashMap<String, Object>();
+							// 查询专柜商品信息
+							paramMap.put("shoppeProSid", shoppeProSid);
+							pcmCreateProductService.getLogSupShoppeByProCode(paramMap,dataDto);
 							PcmShoppeProduct result = pcmCreateProductService
 									.updateSProductBySProductCode2(dataDto, extendDto, shoppeProSid);
 							if (result != null) {
