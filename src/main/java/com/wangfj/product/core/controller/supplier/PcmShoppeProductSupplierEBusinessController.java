@@ -48,7 +48,7 @@ public class PcmShoppeProductSupplierEBusinessController {
 	private IPcmExceptionLogService exceptionLogService;
 
 	/**
-	 * 一品多供应商关系上传
+	 * 一品多供应商关系上传(电商)
 	 * 
 	 * @Methods Name uploadShoppeProductSupplyFromEFuture
 	 * @Create In 2015-8-28 By wangxuan
