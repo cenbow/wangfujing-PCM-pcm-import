@@ -46,7 +46,7 @@ public class PcmShoppeProSupplyController {
     private IPcmExceptionLogService exceptionLogService;
 
     /**
-     * 一品多供应商关系上传
+     * 一品多供应商关系上传(门店)
      *
      * @param para
      * @param request
