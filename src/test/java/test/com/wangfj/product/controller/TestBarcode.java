@@ -101,6 +101,7 @@ public class TestBarcode {
 				Thread t = new Thread() {
 					public void run() {
 						String url = "http://10.6.2.48:5085/pcm-import/barcode/uploadSupplierBarCodeFromEfuture.htm";
+//						String url = "http://127.0.0.1:8085/pcm-import/barcode/uploadSupplierBarCodeFromEfuture.htm";
 						String json = JsonUtil.getJSONString(requestDataPara);
 						System.out.println(json);
 						String doPost = HttpUtil.doPost(url, json);
