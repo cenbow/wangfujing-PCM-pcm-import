@@ -32,14 +32,17 @@ import com.wangfj.core.utils.CacheUtils;
 import com.wangfj.core.utils.HttpUtil;
 import com.wangfj.core.utils.JsonUtil;
 import com.wangfj.core.utils.PropertyUtil;
+import com.wangfj.core.utils.RedisUtil;
 import com.wangfj.core.utils.ThrowExcetpionUtil;
 import com.wangfj.product.SAPERP.controller.support.ProductsSAPERP;
 import com.wangfj.product.SAPERP.controller.support.SapContractPara;
 import com.wangfj.product.SAPERP.controller.support.SapProListPara;
 import com.wangfj.product.SAPERP.controller.support.SaveContractParaSAPERP;
+import com.wangfj.product.common.domain.entity.PcmRedis;
 import com.wangfj.product.common.domain.vo.PcmExceptionLogDto;
 import com.wangfj.product.common.service.impl.PcmExceptionLogService;
 import com.wangfj.product.common.service.intf.IJcoSAPUtil;
+import com.wangfj.product.common.service.intf.IPcmRedisService;
 import com.wangfj.product.constants.DomainName;
 import com.wangfj.product.constants.FlagType;
 import com.wangfj.product.constants.StatusCodeConstants.StatusCode;
@@ -77,6 +80,10 @@ public class SaveProductController extends BaseController {
 	private IJcoSAPUtil jcoUtils;
 	@Autowired
 	private IPcmShoppeProductService proService;
+	@Autowired
+	private RedisUtil redisUtil;
+	@Autowired
+	private IPcmRedisService redisService;
 
 	/**
 	 * 新电商合同导入
@@ -149,8 +156,9 @@ public class SaveProductController extends BaseController {
 							// paramMap.put("PcmSearcherOnline2", "1"); //
 							// 搜索线上下架
 							paramMap.put("PcmProSearch", "1");
-							HttpUtil.doPost(PropertyUtil.getSystemUrl("pcm-syn")
-									+ "/pcmShoppeProduct/publishShoppeProductFromPcm.htm",
+							HttpUtil.doPost(
+									PropertyUtil.getSystemUrl("pcm-syn")
+											+ "/pcmShoppeProduct/publishShoppeProductFromPcm.htm",
 									JsonUtil.getJSONString(paramMap));
 						}
 					} catch (BleException e1) {
@@ -254,8 +262,8 @@ public class SaveProductController extends BaseController {
 			public void run() {
 				RequestHeader header = para.getHeader();
 				List<ProductsSAPERP> data2 = para.getData();
-				List<ProductsSAPERP> data = JSON.parseArray(JsonUtil.getJSONString(data2)
-						.toString(), ProductsSAPERP.class);
+				List<ProductsSAPERP> data = JSON
+						.parseArray(JsonUtil.getJSONString(data2).toString(), ProductsSAPERP.class);
 				// 返回信息LIST
 				List<Map<String, Object>> resList = new ArrayList<Map<String, Object>>();
 				// 异常信息LIST
@@ -293,8 +301,11 @@ public class SaveProductController extends BaseController {
 								resList.add(resMap);
 								continue;
 							}
-							/*validProductService.updateProductContract(sapPara.getS_MATNR(),
-									sapPara.getMATNR(), sapPara.getOFFERNUMBER());*/
+							/*
+							 * validProductService.updateProductContract(sapPara
+							 * .getS_MATNR(), sapPara.getMATNR(),
+							 * sapPara.getOFFERNUMBER());
+							 */
 							// 修改专柜商品属性
 							PullDataDto dataDto = createProductDto(sapPara); // 专柜商品信息
 							PcmShoppeProductExtend extendDto = createExtendDto(sapPara); // 扩展表信息
@@ -304,9 +315,10 @@ public class SaveProductController extends BaseController {
 							Map<String, Object> paramMap = new HashMap<String, Object>();
 							// 查询专柜商品信息
 							paramMap.put("shoppeProSid", shoppeProSid);
-							pcmCreateProductService.getLogSupShoppeByProCode(paramMap,dataDto);
+							pcmCreateProductService.getLogSupShoppeByProCode(paramMap, dataDto);
 							PcmShoppeProduct result = pcmCreateProductService
-									.updateSProductBySProductCode2(dataDto, extendDto, shoppeProSid);
+									.updateSProductBySProductCode2(dataDto, extendDto,
+											shoppeProSid);
 							if (result != null) {
 								// 下发专柜商品
 								publishDto = new PublishDTO();
@@ -315,11 +327,23 @@ public class SaveProductController extends BaseController {
 								sidList.add(publishDto);
 							}
 
-							RedisVo vo2 = new RedisVo();
-							vo2.setKey(sapPara.getS_MATNR());
-							vo2.setField(DomainName.getShoppeInfo);
-							vo2.setType(CacheUtils.HDEL);
-							CacheUtils.setRedisData(vo2);
+							/*
+							 * RedisVo vo2 = new RedisVo();
+							 * vo2.setKey(sapPara.getS_MATNR());
+							 * vo2.setField(DomainName.getShoppeInfo);
+							 * vo2.setType(CacheUtils.HDEL);
+							 * CacheUtils.setRedisData(vo2);
+							 */
+
+							boolean flag = redisUtil
+									.del(DomainName.getShoppeInfo + sapPara.getS_MATNR());
+							if (!CacheUtils.cacheFlag || !flag) {
+								PcmRedis pcmRedisDto = new PcmRedis();
+								pcmRedisDto.setRedisffield(DomainName.getShoppeInfo);
+								pcmRedisDto.setKeyname(
+										DomainName.getShoppeInfo + sapPara.getS_MATNR());
+								redisService.savePcmRedis(pcmRedisDto);
+							}
 							// Map<String, Object> resMap = new HashMap<String,
 							// Object>();
 							// resMap.put("MATNR", sapPara.getMATNR());
@@ -349,8 +373,8 @@ public class SaveProductController extends BaseController {
 						dataDto.setType("2");// 业态表示 0百货 1超市 2电商
 						dataDto.setOfferNumber(sapPara.getOFFERNUMBER());
 						try {
-							PcmShoppeProduct result = validProductService.saveProductFromSAPERP(
-									dataDto, extendDto);
+							PcmShoppeProduct result = validProductService
+									.saveProductFromSAPERP(dataDto, extendDto);
 							// Map<String, Object> resMap = new HashMap<String,
 							// Object>();
 							// resMap.put("MATNR", sapPara.getMATNR());
@@ -387,8 +411,8 @@ public class SaveProductController extends BaseController {
 							}
 						} catch (BleException e) {
 							if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
-								ThrowExcetpionUtil.splitExcetpion(new BleException(e.getCode(), e
-										.getMessage()));
+								ThrowExcetpionUtil.splitExcetpion(
+										new BleException(e.getCode(), e.getMessage()));
 							}
 							Map<String, Object> resMap = new HashMap<String, Object>();
 							resMap.put("KEY_FIELD", sapPara.getMATNR());
@@ -440,9 +464,9 @@ public class SaveProductController extends BaseController {
 											JsonUtil.getJSONString(spusidList));
 								}
 							} catch (Exception e) {
-								ThrowExcetpionUtil.splitExcetpion(new BleException(
-										ErrorCode.DOPOST_SYN_FAILED.getErrorCode(),
-										ErrorCode.DOPOST_SYN_FAILED.getMemo()));
+								ThrowExcetpionUtil.splitExcetpion(
+										new BleException(ErrorCode.DOPOST_SYN_FAILED.getErrorCode(),
+												ErrorCode.DOPOST_SYN_FAILED.getMemo()));
 							}
 						}
 					});
@@ -653,13 +677,16 @@ public class SaveProductController extends BaseController {
 		dto.setYearToMarket(para.getZSSDATE());// 上市日期（yyyymmdd）
 		dto.setProductNum(para.getGOODCLASS());// 商品款号
 		dto.setCrowdUser(para.getZZGENDER());// 适用性别
-		if (StringUtils.isNotBlank(para.getTAXKM1()) && para.getTAXKM1().trim().indexOf("%") == -1) {
+		if (StringUtils.isNotBlank(para.getTAXKM1())
+				&& para.getTAXKM1().trim().indexOf("%") == -1) {
 			dto.setOutputTax(para.getTAXKM1().trim() + "%");// 销项税
 		}
-		if (StringUtils.isNotBlank(para.getTAXKM2()) && para.getTAXKM2().trim().indexOf("%") == -1) {
+		if (StringUtils.isNotBlank(para.getTAXKM2())
+				&& para.getTAXKM2().trim().indexOf("%") == -1) {
 			dto.setConsumptionTax(para.getTAXKM2().trim() + "%");// 消费税
 		}
-		if (StringUtils.isNotBlank(para.getTAXKM3()) && para.getTAXKM3().trim().indexOf("%") == -1) {
+		if (StringUtils.isNotBlank(para.getTAXKM3())
+				&& para.getTAXKM3().trim().indexOf("%") == -1) {
 			dto.setInputTax(para.getTAXKM3().trim() + "%");// 进项税
 		}
 		dto.setSeasonCode(para.getSAISO());// 季节
