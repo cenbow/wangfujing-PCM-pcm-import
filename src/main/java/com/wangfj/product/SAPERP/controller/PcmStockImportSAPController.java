@@ -119,7 +119,8 @@ public class PcmStockImportSAPController {
 								e.printStackTrace();
 							}
 						}
-						if (dto.getDefectiveInventory() != null && dto.getDefectiveInventory() != 0) {
+						if (dto.getDefectiveInventory() != null
+								&& dto.getDefectiveInventory() != 0) {
 							PcmStockDto DefIDto = new PcmStockDto();
 							try {
 								BeanUtils.copyProperties(DefIDto, dto);
@@ -143,12 +144,13 @@ public class PcmStockImportSAPController {
 									dto.setSuccess(Constants.SUCCESS);
 									proList.add(dto.getShoppeProSid());
 									pcmStockService.updateImportStockCache(dto.getShoppeProSid(),
-											dto.getChannelSid());
+											dto.getChannelSid(), dto.getStoreCode());
 								}
 							} catch (BleException e) {
 								resultMapList.add(getResultMap(pcmStockDto.getShoppeProSid(),
 										e.getCode(), e.getMessage()));
-								SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(pcmStockDto));
+								SavaErrorMessage(e.getMessage(),
+										JsonUtil.getJSONString(pcmStockDto));
 							}
 						}
 					}
@@ -182,9 +184,10 @@ public class PcmStockImportSAPController {
 									JcoSAPUtils.functionExecute("ZFM_MD_PCM2SAP_ERROR_IN", "INPUT",
 											resultMapList);
 								} catch (Exception e) {
-									logger.error("API,importProPriceInfo.htm,Error:"
-											+ e.getMessage());
-									SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(resultMapList));
+									logger.error(
+											"API,importProPriceInfo.htm,Error:" + e.getMessage());
+									SavaErrorMessage(e.getMessage(),
+											JsonUtil.getJSONString(resultMapList));
 								}
 							}
 						});
@@ -280,8 +283,9 @@ public class PcmStockImportSAPController {
 			logger.info("API,synPushStockToWCS,response:" + response);
 		} catch (Exception e) {
 			logger.error("API,synPushStockToWCS,Error:" + e.getMessage());
-			ThrowExcetpionUtil.splitExcetpion(new BleException(ErrorCode.STOCK_IMPORT_PUSH_ERROR
-					.getErrorCode(), ErrorCode.STOCK_IMPORT_PUSH_ERROR.getMemo() + e.getMessage()));
+			ThrowExcetpionUtil.splitExcetpion(
+					new BleException(ErrorCode.STOCK_IMPORT_PUSH_ERROR.getErrorCode(),
+							ErrorCode.STOCK_IMPORT_PUSH_ERROR.getMemo() + e.getMessage()));
 			SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(paraList));
 		}
 	}

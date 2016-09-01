@@ -158,7 +158,7 @@ public class PcmStockImportController extends BaseController {
 							resultMap.put("supplyProductId", dto.getShoppeProSid());
 							resultMap.put("proSum", dto.getProSum());
 							pcmStockService.updateImportStockCache(dto.getShoppeProSid(),
-									dto.getChannelSid());
+									dto.getChannelSid(), dto.getStoreCode());
 						} else {
 							resultMap.put("success", dto.getSuccess());
 							resultMap.put("supplyProductId", dto.getShoppeProSid());
@@ -272,13 +272,14 @@ public class PcmStockImportController extends BaseController {
 									dto.setSuccess(Constants.SUCCESS);
 									proList.add(dto.getShoppeProSid());
 									pcmStockService.updateImportStockCache(dto.getShoppeProSid(),
-											dto.getChannelSid());
+											dto.getChannelSid(), dto.getStoreCode());
 								}
 							} catch (BleException e) {
 								pcmStockDto.setErrorCode(e.getCode());
 								pcmStockDto.setException(e.getMessage());
 								pcmStockDto.setSuccess(Constants.FAILURE);
-								SavaErrorMessage(e.getMessage()+JsonUtil.getJSONString(pcmStockDto),
+								SavaErrorMessage(
+										e.getMessage() + JsonUtil.getJSONString(pcmStockDto),
 										JsonUtil.getJSONString(pcmStockDto));
 							}
 							list1.add(pcmStockDto);
@@ -406,7 +407,7 @@ public class PcmStockImportController extends BaseController {
 									dto.setSuccess(Constants.SUCCESS);
 									proList.add(dto.getShoppeProSid());
 									pcmStockService.updateImportStockCache(dto.getShoppeProSid(),
-											dto.getChannelSid());
+											dto.getChannelSid(), dto.getStoreCode());
 								} else {
 									isSuccess = false;
 								}
@@ -462,7 +463,7 @@ public class PcmStockImportController extends BaseController {
 					dto.setSuccess(Constants.SUCCESS);
 					proList.add(dto.getShoppeProSid());
 					pcmStockService.updateImportStockCache(dto.getShoppeProSid(),
-							dto.getChannelSid());
+							dto.getChannelSid(), dto.getStoreCode());
 				}
 			} catch (BleException e) {
 				pcmStockDto.setErrorCode(e.getCode());
