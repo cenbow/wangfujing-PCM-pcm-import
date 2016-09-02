@@ -166,7 +166,7 @@ public class PriceChangeEFERPController extends BaseController {
 									ErrorCode.ADD_CHANGE_PRICE_ERROR.getMemo()));
 						}
 					} catch (BleException e) {
-						pcmPriceParaPushList.add(para);// 临时解决方案
+						// pcmPriceParaPushList.add(para);// 临时解决方案
 						errorList.add(para);
 						priceToERPParas_failed
 								.add(getPcmPriceToERPEntity(para, e.getCode(), e.getMessage()));
