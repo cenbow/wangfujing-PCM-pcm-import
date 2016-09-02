@@ -278,7 +278,7 @@ public class PcmStockImportController extends BaseController {
 								pcmStockDto.setErrorCode(e.getCode());
 								pcmStockDto.setException(e.getMessage());
 								pcmStockDto.setSuccess(Constants.FAILURE);
-								SavaErrorMessage(
+								SavaErrorMessage(e.getCode(),
 										e.getMessage() + JsonUtil.getJSONString(pcmStockDto),
 										JsonUtil.getJSONString(pcmStockDto));
 							}
@@ -495,6 +495,10 @@ public class PcmStockImportController extends BaseController {
 	 *            void
 	 */
 	private void SavaErrorMessage(String errorMessage, String dataContent) {
+		SavaErrorMessage("", errorMessage, dataContent);
+	}
+
+	private void SavaErrorMessage(String errorCode, String errorMessage, String dataContent) {
 		try {
 			PcmExceptionLogDto dto = new PcmExceptionLogDto();
 			dto.setInterfaceName("pcm-import/stockImport/findStockImportFromPcm");
@@ -502,7 +506,14 @@ public class PcmStockImportController extends BaseController {
 			dto.setErrorMessage(errorMessage);
 			dto.setDataContent(dataContent);
 			dto.setUuid(UUID.randomUUID().toString());
-			pcmExceptionLogService.saveExceptionLogInfo(dto);
+			dto.setErrorCode(errorCode);
+			if (StringUtils.isNotBlank(errorCode)
+					&& errorCode.equals(ErrorCode.NOT_XKORXXHC.getErrorCode())) {
+				pcmExceptionLogService.addExceptionLogInfo(dto);
+			} else {
+				pcmExceptionLogService.saveExceptionLogInfo(dto);
+			}
+
 		} catch (Exception e) {
 			logger.info("API,Save PcmExceptionLogDto failed:" + e.getMessage());
 		}
