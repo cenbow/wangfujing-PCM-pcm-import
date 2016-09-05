@@ -150,9 +150,11 @@ public class PriceChangeEFERPController extends BaseController {
 								publishDTO = new PublishDTO();
 								erpProduct = erpProductSerwvice.selectErpProductByProCode(
 										pcmPriceDto.getMatnr(), pcmPriceDto.getStorecode());
-								publishDTO.setSid(erpProduct.getSid());
-								publishDTO.setType(1);
-								sidList.add(publishDTO);
+								if (erpProduct != null) {
+									publishDTO.setSid(erpProduct.getSid());
+									publishDTO.setType(1);
+									sidList.add(publishDTO);
+								}
 							} else {
 								pushSearch.add(pcmPriceDto.getSupplierprodcode());
 							}
