@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SupplierBarCodeFromEfuturePara extends BasePara {
 	@NotNull(message = "{PushSupplierBarCodeToMDERPDto.STORECODE.isNotNull}")

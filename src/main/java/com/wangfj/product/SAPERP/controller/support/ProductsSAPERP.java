@@ -1,6 +1,6 @@
 package com.wangfj.product.SAPERP.controller.support;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProductsSAPERP {
 	@JsonProperty(value = "GLFL")

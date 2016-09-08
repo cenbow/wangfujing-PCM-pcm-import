@@ -1,10 +1,5 @@
 package com.wangfj.product.PAD.controller.support;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-
-import com.alibaba.druid.stat.TableStat.Name;
-import com.alibaba.fastjson.annotation.JSONField;
-
 public class PcmStockPara {
 	/**
 	 * @Field long serialVersionUID

@@ -2,7 +2,8 @@ package com.wangfj.product.EfutureERP.controller.support;
 
 import javax.validation.constraints.NotNull;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 /**
  * 品类信息参数

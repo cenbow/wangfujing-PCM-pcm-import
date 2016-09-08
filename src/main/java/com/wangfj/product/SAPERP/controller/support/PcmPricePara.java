@@ -1,6 +1,6 @@
 package com.wangfj.product.SAPERP.controller.support;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.wangfj.product.core.controller.support.base.para.BasePara;
 

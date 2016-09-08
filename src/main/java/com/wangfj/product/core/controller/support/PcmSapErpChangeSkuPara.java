@@ -1,6 +1,6 @@
 package com.wangfj.product.core.controller.support;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PcmSapErpChangeSkuPara {
 	@JsonProperty(value = "COUNTER_PROD_CODE")

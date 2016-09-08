@@ -2,13 +2,13 @@ package com.wangfj.product.SAPERP.controller.support;
 
 import javax.validation.constraints.NotNull;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SaveContractParaSAPERP {
 	@NotNull(message = "管理分类不能为空")
-	@JsonProperty(value = "GLFL")//管理分类
+	@JsonProperty(value = "GLFL") // 管理分类
 	private String GLFL;
-	
+
 	@NotNull(message = "要约号不能为空")
 	@JsonProperty(value = "CONTRACTCODE")
 	private String CONTRACTCODE; // 要约号
@@ -58,10 +58,9 @@ public class SaveContractParaSAPERP {
 	@JsonProperty(value = "ACTION_PERSON")
 	private String ACTION_PERSON;// 操作人
 
-//	@JsonProperty(value = "manageCategory")
-//	private String manageCategory;// 管理分类
+	// @JsonProperty(value = "manageCategory")
+	// private String manageCategory;// 管理分类
 
-	
 	public String getCONTRACTCODE() {
 		return CONTRACTCODE;
 	}
