@@ -135,7 +135,7 @@ public class PcmStockImportSAPController {
 						}
 					}
 					final List<String> proList = new ArrayList<String>();
-					if (list.size() < Constants.STOCK_IN_COUNT) {
+					if (list.size() <= Constants.STOCK_IN_COUNT) {
 						for (PcmStockDto pcmStockDto : list) {
 							try {
 								PcmStockDto dto = pcmStockService
