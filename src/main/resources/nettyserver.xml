@@ -12,11 +12,10 @@
 		<server-code>13</server-code>
 		<!--系统描述，将写入zk -->
 		<server-desc>
-			'{'"version"\:"1.0","name"\:"wfj-onmi-channel-pcm-import","status"\:"{0}"}
+			'{'"version"\:"1.0","name"\:"wfj-onmi-channel-pcm-import", "status"\:"{0}"}
 		</server-desc>
 		<!--最大请求数 -->
-		<max-income-thread-count>${system.setting.max-income-counts}
-		</max-income-thread-count>
+		<max-income-thread-count>${system.setting.max-income-counts}</max-income-thread-count>
 		<!--是否需要安全认证 -->
 		<ssh-info isSSL="false" needClientAuth="false">
 			<!--数字签名文件位置 -->

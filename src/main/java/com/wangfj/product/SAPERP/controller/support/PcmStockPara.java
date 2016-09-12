@@ -1,5 +1,7 @@
 package com.wangfj.product.SAPERP.controller.support;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PcmStockPara {
 	/**
 	 * @Field long serialVersionUID
@@ -9,54 +11,67 @@ public class PcmStockPara {
 	/*
 	 * sku
 	 */
+	@JsonProperty(value = "SKU")
 	private String SKU;
 	/*
 	 * 供应商商品编码
 	 */
+	@JsonProperty(value = "SUPPLYPRODUCTID")
 	private String SUPPLYPRODUCTID;
 	/*
 	 * 库存地点编码
 	 */
+	@JsonProperty(value = "LOCATION")
 	private String LOCATION;
 	/*
 	 * 出货主体编号
 	 */
+	@JsonProperty(value = "LOCATIONOWNERID")
 	private String LOCATIONOWNERID;
 	/*
 	 * 库存数
 	 */
+	@JsonProperty(value = "INVENTORY")
 	private Integer INVENTORY;
 	/*
 	 * 借用库存数
 	 */
+	@JsonProperty(value = "BORROWINVENTORY")
 	private Integer BORROWINVENTORY;
 	/*
 	 * 残次品库存数
 	 */
+	@JsonProperty(value = "DEFECTIVEINVENTORY")
 	private Integer DEFECTIVEINVENTORY;
 	/*
 	 * 停售库存数
 	 */
+	@JsonProperty(value = "STOPSALESINVENTORY")
 	private Integer STOPSALESINVENTORY;
 	/*
 	 * 安全库存数
 	 */
+	@JsonProperty(value = "WARNINGINVENTORY")
 	private Integer WARNINGINVENTORY;
 	/*
 	 * 改动类型
 	 */
+	@JsonProperty(value = "TYPE")
 	private String TYPE;
 	/*
 	 * 调用方
 	 */
+	@JsonProperty(value = "SOURCE")
 	private String SOURCE;
 	/*
 	 * 操作人
 	 */
+	@JsonProperty(value = "OPERATOR")
 	private String OPERATOR;
 	/**
 	 * guid
 	 */
+	@JsonProperty(value = "GUID")
 	private String GUID;
 
 	public Long getSid() {
