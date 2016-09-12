@@ -135,23 +135,19 @@ public class PcmStockImportSAPController {
 						}
 					}
 					final List<String> proList = new ArrayList<String>();
-					if (list.size() <= Constants.STOCK_IN_COUNT) {
-						for (PcmStockDto pcmStockDto : list) {
-							try {
-								PcmStockDto dto = pcmStockService
-										.findStockImportFromPcm(pcmStockDto);
-								if (dto.getSuccess() == null) {
-									dto.setSuccess(Constants.SUCCESS);
-									proList.add(dto.getShoppeProSid());
-									pcmStockService.updateImportStockCache(dto.getShoppeProSid(),
-											dto.getChannelSid(), dto.getStoreCode());
-								}
-							} catch (BleException e) {
-								resultMapList.add(getResultMap(pcmStockDto.getShoppeProSid(),
-										e.getCode(), e.getMessage()));
-								SavaErrorMessage(e.getMessage(),
-										JsonUtil.getJSONString(pcmStockDto));
+					for (PcmStockDto pcmStockDto : list) {
+						try {
+							PcmStockDto dto = pcmStockService.findStockImportFromPcm(pcmStockDto);
+							if (dto.getSuccess() == null) {
+								dto.setSuccess(Constants.SUCCESS);
+								proList.add(dto.getShoppeProSid());
+								pcmStockService.updateImportStockCache(dto.getShoppeProSid(),
+										dto.getChannelSid(), dto.getStoreCode());
 							}
+						} catch (BleException e) {
+							resultMapList.add(getResultMap(pcmStockDto.getShoppeProSid(),
+									e.getCode(), e.getMessage()));
+							SavaErrorMessage(e.getMessage(), JsonUtil.getJSONString(pcmStockDto));
 						}
 					}
 
