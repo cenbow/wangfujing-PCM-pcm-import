@@ -1,15 +1,37 @@
 package com.wangfj.product.core.controller.support;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PcmSapErpChangePKPara {
+
+	@JsonProperty(value = "PRODUCT")
 	private String PRODUCT;
+
+	@JsonProperty(value = "VALUE")
 	private String VALUE;
+
+	@JsonProperty(value = "XGLB")
 	private String XGLB;
+
+	@JsonProperty(value = "STORE")
 	private String STORE;
+
+	@JsonProperty(value = "SEQNO")
 	private String SEQNO;
+
+	@JsonProperty(value = "ROWNO")
 	private String ROWNO;
+
+	@JsonProperty(value = "DATE")
 	private String DATE;
+
+	@JsonProperty(value = "ACTION_CODE")
 	private String ACTION_CODE;
+
+	@JsonProperty(value = "ACTION_DATE")
 	private String ACTION_DATE;
+
+	@JsonProperty(value = "ACTION_PERSON")
 	private String ACTION_PERSON;
 
 	public String getPRODUCT() {
