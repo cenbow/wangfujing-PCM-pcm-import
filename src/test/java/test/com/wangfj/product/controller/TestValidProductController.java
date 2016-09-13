@@ -135,7 +135,7 @@ public class TestValidProductController {
 		product.setZLY_FLAG("Y");// 虚库标志（Y/N）
 		product.setZSIZE("特性规格");// 特性-尺码/规格
 		product.setZSPRICE("25.22"); // 售价
-		product.setZSSDATE("20151118");// 上市日期（yyyymmdd）
+		product.setZZSSDATE("20151118");// 上市日期（yyyymmdd）
 		product.setZZBRAND_ID("200002");// 门店品牌
 		product.setZZCARD("N");// 是否可贺卡
 		product.setZZCOD("N");// 是否可货到付款
@@ -176,7 +176,7 @@ public class TestValidProductController {
 		product2.setZLY_FLAG("Y");// 虚库标志（Y/N）
 		product2.setZSIZE("特性规格");// 特性-尺码/规格
 		product2.setZSPRICE("25.22"); // 售价
-		product2.setZSSDATE("20151118");// 上市日期（yyyymmdd）
+		product2.setZZSSDATE("20151118");// 上市日期（yyyymmdd）
 		product2.setZZBRAND_ID("200002");// 门店品牌
 		product2.setZZCARD("N");// 是否可贺卡
 		product2.setZZCOD("N");// 是否可货到付款
@@ -220,7 +220,7 @@ public class TestValidProductController {
 		product3.setZLY_FLAG("Y");// 虚库标志（Y/N）
 		product3.setZSIZE("特性规格");// 特性-尺码/规格
 		product3.setZSPRICE("25.22"); // 售价
-		product3.setZSSDATE("20151118");// 上市日期（yyyymmdd）
+		product3.setZZSSDATE("20151118");// 上市日期（yyyymmdd）
 		product3.setZZBRAND_ID("200002");// 门店品牌
 		product3.setZZCARD("N");// 是否可贺卡
 		product3.setZZCOD("N");// 是否可货到付款
@@ -263,7 +263,7 @@ public class TestValidProductController {
 		product4.setZLY_FLAG("Y");// 虚库标志（Y/N）
 		product4.setZSIZE("特性规格");// 特性-尺码/规格
 		product4.setZSPRICE("25.22"); // 售价
-		product4.setZSSDATE("20151118");// 上市日期（yyyymmdd）
+		product4.setZZSSDATE("20151118");// 上市日期（yyyymmdd）
 		product4.setZZBRAND_ID("200002");// 门店品牌
 		product4.setZZCARD("N");// 是否可贺卡
 		product4.setZZCOD("N");// 是否可货到付款
