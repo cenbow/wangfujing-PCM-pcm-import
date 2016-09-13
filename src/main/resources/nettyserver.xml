@@ -12,7 +12,7 @@
 		<server-code>13</server-code>
 		<!--系统描述，将写入zk -->
 		<server-desc>
-			'{'"version"\:"1.0","name"\:"wfj-onmi-channel-pcm-import", "status"\:"{0}"}
+			'{'"version"\:"1.0","name"\:"wfj-onmi-channel-pcm-import","status"\:"{0}"}
 		</server-desc>
 		<!--最大请求数 -->
 		<max-income-thread-count>${system.setting.max-income-counts}</max-income-thread-count>
@@ -33,7 +33,7 @@
 	<listener-infos>
 		<listener listener-class="org.springframework.web.context.ContextLoaderListener" />
 	</listener-infos>
-	<filter-infos>
+	<filter-infos onStartup="true">
 		<filter filter-class="com.wfj.netty.servlet.filter.Monitor"
 			filter-name="servlet-monitor">
 			<filter-mapping url-pattern="/*" />
