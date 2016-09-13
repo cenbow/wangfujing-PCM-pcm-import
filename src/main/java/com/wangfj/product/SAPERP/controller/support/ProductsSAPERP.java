@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProductsSAPERP {
 	@JsonProperty(value = "GLFL")
-	private String GLFL;//管理分类（9位）
+	private String GLFL;// 管理分类（9位）
 	@JsonProperty(value = "MTART")
 	private String MTART;// 经营方式0经销，1代销，2联营，3平台服务，4租赁
 	@JsonProperty(value = "MATKL")
@@ -59,8 +59,8 @@ public class ProductsSAPERP {
 	private String ZLOCAL;// 原产地
 	@JsonProperty(value = "ZLY_FLAG")
 	private String ZLY_FLAG;// 虚库标志（Y/N）
-	@JsonProperty(value = "ZSSDATE")
-	private String ZSSDATE;// 上市日期（yyyymmdd）
+	@JsonProperty(value = "ZZSSDATE")
+	private String ZZSSDATE;// 上市日期（yyyymmdd）
 	@JsonProperty(value = "GOODCLASS")
 	private String GOODCLASS;// 商品款号
 	@JsonProperty(value = "ZZGENDER")
@@ -102,9 +102,8 @@ public class ProductsSAPERP {
 	@JsonProperty(value = "ACTIONPERSON")
 	private String ACTIONPERSON;// 操作人
 	@JsonProperty(value = "SUPPLIERPRODUCTCODE")
-	private String SUPPLIERPRODUCTCODE;//中台专柜商品编码
+	private String SUPPLIERPRODUCTCODE;// 中台专柜商品编码
 
-	
 	public String getGLFL() {
 		return GLFL;
 	}
@@ -377,12 +376,12 @@ public class ProductsSAPERP {
 		ZLY_FLAG = zLY_FLAG;
 	}
 
-	public String getZSSDATE() {
-		return ZSSDATE;
+	public String getZZSSDATE() {
+		return ZZSSDATE;
 	}
 
-	public void setZSSDATE(String zSSDATE) {
-		ZSSDATE = zSSDATE;
+	public void setZZSSDATE(String zZSSDATE) {
+		ZZSSDATE = zZSSDATE;
 	}
 
 	public String getGOODCLASS() {
@@ -515,7 +514,7 @@ public class ProductsSAPERP {
 				+ ZZCOLORCODE + ", ZSIZE=" + ZSIZE + ", ZZSIZECODE=" + ZZSIZECODE + ", MEINS="
 				+ MEINS + ", ZZCOD=" + ZZCOD + ", ZZPACK=" + ZZPACK + ", ZZCARD=" + ZZCARD
 				+ ", SATNR=" + SATNR + ", MSTAV=" + MSTAV + ", ZLAND=" + ZLAND + ", ZLOCAL="
-				+ ZLOCAL + ", ZLY_FLAG=" + ZLY_FLAG + ", ZSSDATE=" + ZSSDATE + ", GOODCLASS="
+				+ ZLOCAL + ", ZLY_FLAG=" + ZLY_FLAG + ", ZZSSDATE=" + ZZSSDATE + ", GOODCLASS="
 				+ GOODCLASS + ", ZZGENDER=" + ZZGENDER + ", TAXKM1=" + TAXKM1 + ", TAXKM2="
 				+ TAXKM2 + ", TAXKM3=" + TAXKM3 + ", ZZYCBZ=" + ZZYCBZ + ", WERKS=" + WERKS
 				+ ", SAISO=" + SAISO + ", ZZPICCODE=" + ZZPICCODE + ", IS_GIFT=" + IS_GIFT

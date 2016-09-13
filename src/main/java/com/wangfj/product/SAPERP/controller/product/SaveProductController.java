@@ -156,9 +156,8 @@ public class SaveProductController extends BaseController {
 							// paramMap.put("PcmSearcherOnline2", "1"); //
 							// 搜索线上下架
 							paramMap.put("PcmProSearch", "1");
-							HttpUtil.doPost(
-									PropertyUtil.getSystemUrl("pcm-syn")
-											+ "/pcmShoppeProduct/publishShoppeProductFromPcm.htm",
+							HttpUtil.doPost(PropertyUtil.getSystemUrl("pcm-syn")
+									+ "/pcmShoppeProduct/publishShoppeProductFromPcm.htm",
 									JsonUtil.getJSONString(paramMap));
 						}
 					} catch (BleException e1) {
@@ -262,8 +261,8 @@ public class SaveProductController extends BaseController {
 			public void run() {
 				RequestHeader header = para.getHeader();
 				List<ProductsSAPERP> data2 = para.getData();
-				List<ProductsSAPERP> data = JSON
-						.parseArray(JsonUtil.getJSONString(data2).toString(), ProductsSAPERP.class);
+				List<ProductsSAPERP> data = JSON.parseArray(JsonUtil.getJSONString(data2)
+						.toString(), ProductsSAPERP.class);
 				// 返回信息LIST
 				List<Map<String, Object>> resList = new ArrayList<Map<String, Object>>();
 				// 异常信息LIST
@@ -317,8 +316,7 @@ public class SaveProductController extends BaseController {
 							paramMap.put("shoppeProSid", shoppeProSid);
 							pcmCreateProductService.getLogSupShoppeByProCode(paramMap, dataDto);
 							PcmShoppeProduct result = pcmCreateProductService
-									.updateSProductBySProductCode2(dataDto, extendDto,
-											shoppeProSid);
+									.updateSProductBySProductCode2(dataDto, extendDto, shoppeProSid);
 							if (result != null) {
 								// 下发专柜商品
 								publishDto = new PublishDTO();
@@ -335,13 +333,13 @@ public class SaveProductController extends BaseController {
 							 * CacheUtils.setRedisData(vo2);
 							 */
 
-							boolean flag = redisUtil
-									.del(DomainName.getShoppeInfo + sapPara.getS_MATNR());
+							boolean flag = redisUtil.del(DomainName.getShoppeInfo
+									+ sapPara.getS_MATNR());
 							if (!CacheUtils.cacheFlag || !flag) {
 								PcmRedis pcmRedisDto = new PcmRedis();
 								pcmRedisDto.setRedisffield(DomainName.getShoppeInfo);
-								pcmRedisDto.setKeyname(
-										DomainName.getShoppeInfo + sapPara.getS_MATNR());
+								pcmRedisDto.setKeyname(DomainName.getShoppeInfo
+										+ sapPara.getS_MATNR());
 								redisService.savePcmRedis(pcmRedisDto);
 							}
 							// Map<String, Object> resMap = new HashMap<String,
@@ -373,8 +371,8 @@ public class SaveProductController extends BaseController {
 						dataDto.setType("2");// 业态表示 0百货 1超市 2电商
 						dataDto.setOfferNumber(sapPara.getOFFERNUMBER());
 						try {
-							PcmShoppeProduct result = validProductService
-									.saveProductFromSAPERP(dataDto, extendDto);
+							PcmShoppeProduct result = validProductService.saveProductFromSAPERP(
+									dataDto, extendDto);
 							// Map<String, Object> resMap = new HashMap<String,
 							// Object>();
 							// resMap.put("MATNR", sapPara.getMATNR());
@@ -411,8 +409,8 @@ public class SaveProductController extends BaseController {
 							}
 						} catch (BleException e) {
 							if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
-								ThrowExcetpionUtil.splitExcetpion(
-										new BleException(e.getCode(), e.getMessage()));
+								ThrowExcetpionUtil.splitExcetpion(new BleException(e.getCode(), e
+										.getMessage()));
 							}
 							Map<String, Object> resMap = new HashMap<String, Object>();
 							resMap.put("KEY_FIELD", sapPara.getMATNR());
@@ -464,9 +462,9 @@ public class SaveProductController extends BaseController {
 											JsonUtil.getJSONString(spusidList));
 								}
 							} catch (Exception e) {
-								ThrowExcetpionUtil.splitExcetpion(
-										new BleException(ErrorCode.DOPOST_SYN_FAILED.getErrorCode(),
-												ErrorCode.DOPOST_SYN_FAILED.getMemo()));
+								ThrowExcetpionUtil.splitExcetpion(new BleException(
+										ErrorCode.DOPOST_SYN_FAILED.getErrorCode(),
+										ErrorCode.DOPOST_SYN_FAILED.getMemo()));
 							}
 						}
 					});
@@ -674,19 +672,16 @@ public class SaveProductController extends BaseController {
 		} else if ("N".equals(para.getZLY_FLAG())) {
 			dto.setStockMode("1");// 虚库标志（Y/N）
 		}
-		dto.setYearToMarket(para.getZSSDATE());// 上市日期（yyyymmdd）
+		dto.setYearToMarket(para.getZZSSDATE());// 上市日期（yyyymmdd）
 		dto.setProductNum(para.getGOODCLASS());// 商品款号
 		dto.setCrowdUser(para.getZZGENDER());// 适用性别
-		if (StringUtils.isNotBlank(para.getTAXKM1())
-				&& para.getTAXKM1().trim().indexOf("%") == -1) {
+		if (StringUtils.isNotBlank(para.getTAXKM1()) && para.getTAXKM1().trim().indexOf("%") == -1) {
 			dto.setOutputTax(para.getTAXKM1().trim() + "%");// 销项税
 		}
-		if (StringUtils.isNotBlank(para.getTAXKM2())
-				&& para.getTAXKM2().trim().indexOf("%") == -1) {
+		if (StringUtils.isNotBlank(para.getTAXKM2()) && para.getTAXKM2().trim().indexOf("%") == -1) {
 			dto.setConsumptionTax(para.getTAXKM2().trim() + "%");// 消费税
 		}
-		if (StringUtils.isNotBlank(para.getTAXKM3())
-				&& para.getTAXKM3().trim().indexOf("%") == -1) {
+		if (StringUtils.isNotBlank(para.getTAXKM3()) && para.getTAXKM3().trim().indexOf("%") == -1) {
 			dto.setInputTax(para.getTAXKM3().trim() + "%");// 进项税
 		}
 		dto.setSeasonCode(para.getSAISO());// 季节

@@ -7,7 +7,6 @@
  */
 package com.wangfj.product.core.controller;
 
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,8 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.wangfj.core.cache.RedisVo;
-import com.wangfj.core.constants.ErrorCodeConstants;
 import com.wangfj.core.constants.ComErrorCodeConstants.ErrorCode;
+import com.wangfj.core.constants.ErrorCodeConstants;
 import com.wangfj.core.framework.base.controller.BaseController;
 import com.wangfj.core.framework.exception.BleException;
 import com.wangfj.core.utils.CacheUtils;
@@ -40,7 +39,6 @@ import com.wangfj.core.utils.JsonUtil;
 import com.wangfj.core.utils.PropertyUtil;
 import com.wangfj.core.utils.ThrowExcetpionUtil;
 import com.wangfj.product.PIS.controller.ValidProductController;
-import com.wangfj.product.PIS.controller.support.PullDataPara;
 import com.wangfj.product.SAPERP.controller.support.ProductsSAPERP;
 import com.wangfj.product.common.domain.vo.PcmExceptionLogDto;
 import com.wangfj.product.common.service.impl.PcmExceptionLogService;
@@ -72,7 +70,7 @@ import com.wfj.exception.client.util.StringUtils;
  */
 @Controller
 @RequestMapping("/allSysPullProData")
-public class PcmAllSysSaveProductController extends BaseController{
+public class PcmAllSysSaveProductController extends BaseController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ValidProductController.class);
 	@Autowired
@@ -93,8 +91,10 @@ public class PcmAllSysSaveProductController extends BaseController{
 	private IPcmCreateProductService pcmCreateProductService;
 	@Autowired
 	private IJcoSAPUtil jcoUtils;
+
 	/**
 	 * 导入终端上传商品
+	 * 
 	 * @Methods Name pullProductFromYongliPIS
 	 * @Create In 2016年6月15日 By wangc
 	 * @param para1
@@ -102,7 +102,8 @@ public class PcmAllSysSaveProductController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/pullProductFromYongliPIS", method = RequestMethod.POST)
-	public String pullProductFromYongliPIS(@RequestBody MqRequestDataListPara<PcmAllSysPullDataPara> para1) {
+	public String pullProductFromYongliPIS(
+			@RequestBody MqRequestDataListPara<PcmAllSysPullDataPara> para1) {
 		final MqRequestDataListPara<PcmAllSysPullDataPara> para = para1;
 		taskExecutor.execute(new Runnable() {
 			@Override
@@ -122,31 +123,33 @@ public class PcmAllSysSaveProductController extends BaseController{
 					listDataDto.add(dataDto);
 				}
 
-				//超市百货商品下发LIST
+				// 超市百货商品下发LIST
 				final List<PublishDTO> sidList = new ArrayList<PublishDTO>();
 				final List<PublishDTO> skusidList = new ArrayList<PublishDTO>();
 				final List<PublishDTO> spusidList = new ArrayList<PublishDTO>();
-				//电商商品下发LIST
+				// 电商商品下发LIST
 				final List<PublishDTO> sapSidList = new ArrayList<PublishDTO>();
-				//不带要约的电商商品下发
-				final List<PublishDTO> sapSidListOffernumIsNull =new ArrayList<PublishDTO>();
+				// 不带要约的电商商品下发
+				final List<PublishDTO> sapSidListOffernumIsNull = new ArrayList<PublishDTO>();
 				// 回调信息LIST
 				final List<ResultPullDataDto> resList = new ArrayList<ResultPullDataDto>();
 				// 异常信息LIST
 				final List<ResultPullDataDto> excepList = new ArrayList<ResultPullDataDto>();
-				System.out.println("------------------------------------------------导入终端---------------------------------------------------");
+				System.out
+						.println("------------------------------------------------导入终端---------------------------------------------------");
 				System.out.println(sapSidList.toString());
-				System.out.println("-----------------------------------------------------------------------------------------------------------");
+				System.out
+						.println("-----------------------------------------------------------------------------------------------------------");
 				for (PcmAllSysPullDataDto dataDto : listDataDto) {
 					ResultPullDataDto resDto = new ResultPullDataDto();
 					resDto.setLineNumber(dataDto.getLineNumber());
-					String type = dataDto.getType();//商品业态
+					String type = dataDto.getType();// 商品业态
 					try {
 						dataDto.setSource("PIS");
-						PcmShoppeProduct result = allSysPullProductService
-								.allSysSaveProduct(dataDto,null);
-						if(result != null){
-							if (!"2".equals(type)) {//非电商商品按之前下发
+						PcmShoppeProduct result = allSysPullProductService.allSysSaveProduct(
+								dataDto, null);
+						if (result != null) {
+							if (!"2".equals(type)) {// 非电商商品按之前下发
 								resDto.setMessageCode(Constants.PUBLIC_0);
 								resDto.setMessageName("商品添加成功");
 								resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
@@ -155,9 +158,9 @@ public class PcmAllSysSaveProductController extends BaseController{
 								publishDto.setSid(result.getSid());
 								publishDto.setType(Constants.PUBLIC_0);
 								sidList.add(publishDto);
-							}else{//电商商品下发电商和富基
-								if(StringUtils.isBlank(dataDto.getOfferNumber())){
-									//如果电商商品没有要约 , 则只下发到SAP
+							} else {// 电商商品下发电商和富基
+								if (StringUtils.isBlank(dataDto.getOfferNumber())) {
+									// 如果电商商品没有要约 , 则只下发到SAP
 									resDto.setMessageCode(Constants.PUBLIC_0);
 									resDto.setMessageName("商品添加成功");
 									resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
@@ -166,7 +169,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 									publishDto.setSid(result.getSid());
 									publishDto.setType(Constants.PUBLIC_0);
 									sapSidListOffernumIsNull.add(publishDto);
-								}else{//如果有合同,则下发sap 搜索和future
+								} else {// 如果有合同,则下发sap 搜索和future
 									resDto.setMessageCode(Constants.PUBLIC_0);
 									resDto.setMessageName("商品添加成功");
 									resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
@@ -176,7 +179,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 									publishDto.setType(Constants.PUBLIC_0);
 									sapSidList.add(publishDto);
 								}
-								
+
 							}
 							if (result.getPackUnitDictSid() != 0l) {
 								// 下发SPU
@@ -223,7 +226,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 						public void run() {
 							try {
 								logger.info("调用SYN服务下发专柜商品");
-								if(sapSidList != null && sapSidList.size() != 0){//电商商品下发
+								if (sapSidList != null && sapSidList.size() != 0) {// 电商商品下发
 									Map<String, Object> pushMap = new HashMap<String, Object>();
 									pushMap.put("paraList", sapSidList);
 									pushMap.put("PcmSapErpSourcePis", "1");
@@ -233,8 +236,9 @@ public class PcmAllSysSaveProductController extends BaseController{
 											PropertyUtil.getSystemUrl("product.pushShoppeProduct"),
 											JsonUtil.getJSONString(pushMap));
 								}
-								//无合同商品 只下发sap
-								if(sapSidListOffernumIsNull != null && sapSidListOffernumIsNull.size() != 0){
+								// 无合同商品 只下发sap
+								if (sapSidListOffernumIsNull != null
+										&& sapSidListOffernumIsNull.size() != 0) {
 									Map<String, Object> pushMap = new HashMap<String, Object>();
 									pushMap.put("paraList", sapSidListOffernumIsNull);
 									pushMap.put("PcmSapErpSourcePis", "1");
@@ -243,7 +247,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 											PropertyUtil.getSystemUrl("product.pushShoppeProduct"),
 											JsonUtil.getJSONString(pushMap));
 								}
-								if (sidList != null && sidList.size() != 0) {//非电商商品下发
+								if (sidList != null && sidList.size() != 0) {// 非电商商品下发
 									Map<String, Object> pushMap = new HashMap<String, Object>();
 									pushMap.put("paraList", sidList);
 									pushMap.put("PcmEfutureERP", "1");
@@ -307,6 +311,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 
 	/**
 	 * 供应商商品上传
+	 * 
 	 * @Methods Name pullProductFromSupllier
 	 * @Create In 2016年6月15日 By wangc
 	 * @param para1
@@ -314,7 +319,8 @@ public class PcmAllSysSaveProductController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/pullProductFromSupllier", method = RequestMethod.POST)
-	public String pullProductFromSupllier(@RequestBody MqRequestDataListPara<PcmAllSysPullDataPara> para1) {
+	public String pullProductFromSupllier(
+			@RequestBody MqRequestDataListPara<PcmAllSysPullDataPara> para1) {
 		final MqRequestDataListPara<PcmAllSysPullDataPara> para = para1;
 		taskExecutor.execute(new Runnable() {
 			@Override
@@ -338,30 +344,33 @@ public class PcmAllSysSaveProductController extends BaseController{
 				final List<ResultPullDataForSupllierDto> resList = new ArrayList<ResultPullDataForSupllierDto>();
 				// 异常信息LIST
 				final List<ResultPullDataForSupllierDto> excepList = new ArrayList<ResultPullDataForSupllierDto>();
-				//超市百货商品下发LIST
+				// 超市百货商品下发LIST
 				final List<PublishDTO> sidList = new ArrayList<PublishDTO>();
 				final List<PublishDTO> skusidList = new ArrayList<PublishDTO>();
 				final List<PublishDTO> spusidList = new ArrayList<PublishDTO>();
-				//电商商品下发LIST
+				// 电商商品下发LIST
 				final List<PublishDTO> sapSidList = new ArrayList<PublishDTO>();
-				//不带要约的电商商品下发
-				final List<PublishDTO> sapSidListOffernumIsNull =new ArrayList<PublishDTO>();
-				for(int i=1;i<10;i++){
+				// 不带要约的电商商品下发
+				final List<PublishDTO> sapSidListOffernumIsNull = new ArrayList<PublishDTO>();
+				for (int i = 1; i < 10; i++) {
 					PublishDTO dt = new PublishDTO();
 					dt.setSid(Long.valueOf(i));
 					sapSidList.add(dt);
 				}
-				System.out.println("------------------------------------------------供应商平台---------------------------------------------------");
+				System.out
+						.println("------------------------------------------------供应商平台---------------------------------------------------");
 				System.out.println(sapSidList.toString());
-				System.out.println("-----------------------------------------------------------------------------------------------------------");
+				System.out
+						.println("-----------------------------------------------------------------------------------------------------------");
 				for (PcmAllSysPullDataDto dataDto : listDataDto) {
 					ResultPullDataForSupllierDto resDto = new ResultPullDataForSupllierDto();
 					resDto.setLineNumber(dataDto.getLineNumber());
 					try {
 						dataDto.setSource("SUP");
-						PcmShoppeProduct result = allSysPullProductService.allSysSaveProduct(dataDto, null);
+						PcmShoppeProduct result = allSysPullProductService.allSysSaveProduct(
+								dataDto, null);
 						if (result != null) {
-							if(!"2".equals(dataDto.getType())){//非电商商品按之前下发
+							if (!"2".equals(dataDto.getType())) {// 非电商商品按之前下发
 								resDto.setMessageCode(Constants.PUBLIC_0);
 								resDto.setMessageName("商品添加成功");
 								resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
@@ -370,9 +379,9 @@ public class PcmAllSysSaveProductController extends BaseController{
 								publishDto.setSid(result.getSid());
 								publishDto.setType(Constants.PUBLIC_0);
 								sidList.add(publishDto);
-							}else{//电商商品下发电商和富基
-								if(StringUtils.isBlank(dataDto.getOfferNumber())){
-									//如果电商商品没有要约 , 则只下发到SAP
+							} else {// 电商商品下发电商和富基
+								if (StringUtils.isBlank(dataDto.getOfferNumber())) {
+									// 如果电商商品没有要约 , 则只下发到SAP
 									resDto.setMessageCode(Constants.PUBLIC_0);
 									resDto.setMessageName("商品添加成功");
 									resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
@@ -381,7 +390,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 									publishDto.setSid(result.getSid());
 									publishDto.setType(Constants.PUBLIC_0);
 									sapSidListOffernumIsNull.add(publishDto);
-								}else{//如果有合同,则下发sap 搜索和future
+								} else {// 如果有合同,则下发sap 搜索和future
 									resDto.setMessageCode(Constants.PUBLIC_0);
 									resDto.setMessageName("商品添加成功");
 									resDto.setProductCode(result.getShoppeProSid());// 专柜商品编码
@@ -420,7 +429,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 						}
 						resDto.setMessageCode(Constants.PUBLIC_1);
 						resDto.setMessageName(e.getCode() + " " + e.getMessage());
-						resDto.setImportNo(dataDto.getImportNo());//批次号
+						resDto.setImportNo(dataDto.getImportNo());// 批次号
 						excepList.add(resDto);
 					}
 					resList.add(resDto);
@@ -433,7 +442,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 						public void run() {
 							try {
 								logger.info("调用SYN服务下发专柜商品");
-								if(sapSidList != null && sapSidList.size() != 0){//电商商品下发
+								if (sapSidList != null && sapSidList.size() != 0) {// 电商商品下发
 									Map<String, Object> pushMap = new HashMap<String, Object>();
 									pushMap.put("paraList", sapSidList);
 									pushMap.put("PcmSapErpSourcePis", "1");
@@ -443,8 +452,9 @@ public class PcmAllSysSaveProductController extends BaseController{
 											PropertyUtil.getSystemUrl("product.pushShoppeProduct"),
 											JsonUtil.getJSONString(pushMap));
 								}
-								//无合同商品 只下发sap
-								if(sapSidListOffernumIsNull != null && sapSidListOffernumIsNull.size() != 0){
+								// 无合同商品 只下发sap
+								if (sapSidListOffernumIsNull != null
+										&& sapSidListOffernumIsNull.size() != 0) {
 									Map<String, Object> pushMap = new HashMap<String, Object>();
 									pushMap.put("paraList", sapSidListOffernumIsNull);
 									pushMap.put("PcmSapErpSourcePis", "1");
@@ -485,7 +495,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 						}
 					});
 				}
-				
+
 				// 写入异常表
 				if (excepList.size() != 0) {
 					PcmExceptionLogDto pcmExceptionLogDto = new PcmExceptionLogDto();
@@ -514,7 +524,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 		});
 		return JsonUtil.getJSONString(MqUtil.GetMqResponseInfo(para.getHeader()));
 	}
-	
+
 	/**
 	 * 电商商品导入
 	 * 
@@ -525,7 +535,8 @@ public class PcmAllSysSaveProductController extends BaseController{
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/saveProductFromSAPERP", method = RequestMethod.POST)
-	public String saveProductFromSAPERP(@RequestBody @Valid MqRequestDataListPara<ProductsSAPERP> para2) {
+	public String saveProductFromSAPERP(
+			@RequestBody @Valid MqRequestDataListPara<ProductsSAPERP> para2) {
 		final MqRequestDataListPara<ProductsSAPERP> para = para2;
 		taskExecutor.execute(new Runnable() {
 			@Override
@@ -610,7 +621,8 @@ public class PcmAllSysSaveProductController extends BaseController{
 						dataDto.setType("2");// 业态表示 0百货 1超市 2电商
 						dataDto.setOfferNumber(sapPara.getOFFERNUMBER());
 						try {
-							PcmShoppeProduct result = allSysPullProductService.allSysSaveProduct(dataDto, extendDto);
+							PcmShoppeProduct result = allSysPullProductService.allSysSaveProduct(
+									dataDto, extendDto);
 							if (result != null) {
 								// 下发专柜商品
 								publishDto = new PublishDTO();
@@ -712,6 +724,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 		});
 		return JsonUtil.getJSONString(MqUtil.GetMqResponseInfo(para.getHeader()));
 	}
+
 	/**
 	 * 生成商品表DTO
 	 * 
@@ -757,7 +770,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 		} else if ("N".equals(para.getZLY_FLAG())) {
 			dto.setStockMode("1");// 虚库标志（Y/N）
 		}
-		dto.setYearToMarket(para.getZSSDATE());// 上市日期（yyyymmdd）
+		dto.setYearToMarket(para.getZZSSDATE());// 上市日期（yyyymmdd）
 		dto.setProductNum(para.getGOODCLASS());// 商品款号
 		dto.setCrowdUser(para.getZZGENDER());// 适用性别
 		if (StringUtils.isNotBlank(para.getTAXKM1()) && para.getTAXKM1().trim().indexOf("%") == -1) {
@@ -775,7 +788,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 		dto.setSalePrice(para.getZSPRICE());// 售价
 		dto.setProColor(para.getCOLORSID());// 色系
 		dto.setUnitCode(para.getUNIT());// 销售单位
-		dto.setFinalClassiFicationCode(para.getSCATE());//统计分类
+		dto.setFinalClassiFicationCode(para.getSCATE());// 统计分类
 		dto.setSource("SAP");
 		return dto;
 	}
@@ -817,7 +830,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 		} else if ("N".equals(para.getZLY_FLAG())) {
 			dto.setStockMode("1");// 虚库标志（Y/N）
 		}
-		dto.setYearToMarket(para.getZSSDATE());// 上市日期（yyyymmdd）
+		dto.setYearToMarket(para.getZZSSDATE());// 上市日期（yyyymmdd）
 		dto.setProductNum(para.getGOODCLASS());// 商品款号
 		dto.setCrowdUser(para.getZZGENDER());// 适用性别
 		if (StringUtils.isNotBlank(para.getTAXKM1()) && para.getTAXKM1().trim().indexOf("%") == -1) {
@@ -838,6 +851,7 @@ public class PcmAllSysSaveProductController extends BaseController{
 		dto.setFinalClassiFicationCode(para.getSCATE());
 		return dto;
 	}
+
 	/**
 	 * 生成附加表DTO
 	 * 
