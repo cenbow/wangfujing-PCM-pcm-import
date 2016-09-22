@@ -1,5 +1,6 @@
 package com.wangfj.product.SAPERP.controller.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.wangfj.product.core.controller.support.base.para.BasePara;
@@ -11,6 +12,7 @@ import com.wangfj.product.core.controller.support.base.para.BasePara;
  * @Author kongqf
  * @Create In 2015年7月10日
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PcmPricePara extends BasePara {
 	/**
 	 * 门店(中台的门店编码)

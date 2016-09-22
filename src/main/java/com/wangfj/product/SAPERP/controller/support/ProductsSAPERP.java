@@ -1,7 +1,9 @@
 package com.wangfj.product.SAPERP.controller.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductsSAPERP {
 	@JsonProperty(value = "GLFL")
 	private String GLFL;// 管理分类（9位）
