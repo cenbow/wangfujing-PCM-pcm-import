@@ -378,7 +378,8 @@ public class ErpProductController extends BaseController {
 					try {
 						Integer result = erpProductService.modifyErpChangeFromEFutureForBill(dto);
 					} catch (BleException e) {
-						map.put("单据号:" + dto.getSEQNO() + ",行号:" + dto.getROWNO(), e.getMessage());
+						map.put("单据号:" + dto.getSEQNO() + ",行号:" + dto.getROWNO() + "商品编码:"
+								+ dto.getPRODUCT(), e.getMessage());
 						map.put("errorCode", e.getCode());
 						// excepList.add(map);
 					}
