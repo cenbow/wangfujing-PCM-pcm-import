@@ -201,16 +201,24 @@ public class PcmShopBrandController extends BaseController {
                         if (result.toString().equals(Constants.PUBLIC_1 + "")) {
                             final String sid = resultMap.get("sid") + "";
                             if (StringUtils.isNotEmpty(sid)) {
+                                List<Map<String, Object>> pushList = new ArrayList<Map<String, Object>>();
+                                Map<String, Object> paraMap = new HashMap<String, Object>();
+                                paraMap.put("sid", sid);
+                                pushList.add(paraMap);
+                                final String json = JsonUtil.getJSONString(pushList);
                                 taskExecutor.execute(new Runnable() {
                                     @Override
-                                    public void run() {
-                                        List<Map<String, Object>> pushList = new ArrayList<Map<String, Object>>();
-                                        Map<String, Object> paraMap = new HashMap<String, Object>();
-                                        paraMap.put("sid", sid);
-                                        pushList.add(paraMap);
-                                        String json = JsonUtil.getJSONString(pushList);
+                                    public void run() {//线下门店品牌下发给搜索
                                         String offlineSearchUrl = PropertyUtil.getSystemUrl("pcm-syn")
                                                 + "pcmSynBrand/pushBrandToOfflineSearch.htm";
+                                        HttpUtil.doPost(offlineSearchUrl, json);
+                                    }
+                                });
+                                taskExecutor.execute(new Runnable() {//门店品牌及门店号下发给搜索-供应商平台查询
+                                    @Override
+                                    public void run() {
+                                        String offlineSearchUrl = PropertyUtil.getSystemUrl("pcm-syn")
+                                                + "pcmSynBrand/pushShopBrandToSearch.htm";
                                         HttpUtil.doPost(offlineSearchUrl, json);
                                     }
                                 });
@@ -308,7 +316,7 @@ public class PcmShopBrandController extends BaseController {
                             paraList.add(paraMap);
                         }
 
-                    }catch (BleException ble){
+                    } catch (BleException ble) {
                         String dataContent = "门店与门店品牌信息上传时数据:" + dto.toString() + "时失败;异常信息：" + ble.getMessage();
 
                         PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();

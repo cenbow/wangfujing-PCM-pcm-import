@@ -2,8 +2,10 @@ package com.wangfj.product.SAPERP.controller.support;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SaveContractParaSAPERP {
 	@NotNull(message = "管理分类不能为空")
 	@JsonProperty(value = "GLFL") // 管理分类

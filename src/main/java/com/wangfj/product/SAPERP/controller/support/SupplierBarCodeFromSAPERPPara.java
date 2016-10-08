@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SupplierBarCodeFromSAPERPPara {
 	@NotNull(message = "{PushSupplierBarCodeToMDERPDto.STORECODE.isNotNull}")
 	@JsonProperty(value = "STORECODE")

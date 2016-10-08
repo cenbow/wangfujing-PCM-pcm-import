@@ -1,5 +1,6 @@
 package com.wangfj.product.core.controller.supplier.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
  * @Author wangxuan
  * @Create In 2015-8-25
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PcmSupplierEBusinessPara {
 
     @NotNull(message = "{PcmSupplyInfoPara.STORECODE.isNotNull}")

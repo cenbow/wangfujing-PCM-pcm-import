@@ -2,6 +2,7 @@ package com.wangfj.product.EfutureERP.controller.support;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @Author duanzhaole
  * @Create In 2015年7月2日
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CopyToCategoryPara {
 
 	/**

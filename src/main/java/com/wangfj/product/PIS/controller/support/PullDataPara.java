@@ -1,5 +1,7 @@
 package com.wangfj.product.PIS.controller.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +12,7 @@ import java.util.Map;
  * @Author wangsy
  * @Create In 2015年7月15日
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class PullDataPara {
 	//
 	// /**
