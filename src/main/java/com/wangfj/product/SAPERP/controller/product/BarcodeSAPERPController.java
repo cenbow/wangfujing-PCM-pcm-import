@@ -59,12 +59,14 @@ public class BarcodeSAPERPController extends BaseController {
 	 */
 	@RequestMapping(value = "/uploadSupplierBarCodeFromSAPERP")
 	@ResponseBody
-	public String uploadSupplierBarCodeFromSAPERP(@RequestBody MqRequestDataListPara<SupplierBarCodeFromSAPERPPara> para1,
+	public String uploadSupplierBarCodeFromSAPERP(
+			@RequestBody MqRequestDataListPara<SupplierBarCodeFromSAPERPPara> para1,
 			HttpServletRequest request) {
 		final MqRequestDataListPara<SupplierBarCodeFromSAPERPPara> para = para1;
-		//List<SupplierBarCodeFromSAPERPPara> jsono = para.getData();//JSONObject.fromObject(para.getData());		
+		// List<SupplierBarCodeFromSAPERPPara> jsono =
+		// para.getData();//JSONObject.fromObject(para.getData());
 		List<SupplierBarCodeFromSAPERPPara> listPara = para.getData();
-		// 返回信息LIST		
+		// 返回信息LIST
 		List<Map<String, Object>> resList = new ArrayList<Map<String, Object>>();
 		List<String> excepList = new ArrayList<String>();
 		for (int i = 0; i < listPara.size(); i++) {
@@ -82,7 +84,7 @@ public class BarcodeSAPERPController extends BaseController {
 			pslDto.setLifnr(paras.getLIFNR());
 			pslDto.setMatnr(paras.getMATNR());
 			pslDto.setSaleAmount(paras.getSALEAMOUNT());
-			pslDto.setSalePrice(paras.getSALEPRICE());
+			// pslDto.setSalePrice(paras.getSALEPRICE());
 			pslDto.setSaleUnit(paras.getSALEUNIT());
 			pslDto.setSbarcode(paras.getSBARCODE());
 			pslDto.setSbarcodeName(paras.getSBARCODENAME());
@@ -93,8 +95,8 @@ public class BarcodeSAPERPController extends BaseController {
 					pcmBarcodeService.getSupplierBarCodeFromEfuture(pslDto);
 				} catch (BleException e) {
 					if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
-						ThrowExcetpionUtil.splitExcetpion(new BleException(e.getCode(), e
-								.getMessage()));
+						ThrowExcetpionUtil
+								.splitExcetpion(new BleException(e.getCode(), e.getMessage()));
 					}
 					Map<String, Object> resMap = new HashMap<String, Object>();
 					resMap.put("KEY_FIELD", paras.getMATNR());
@@ -110,8 +112,8 @@ public class BarcodeSAPERPController extends BaseController {
 				resMap.put("FLAG", 3);
 				resMap.put("MESSAGE", "ActionCode不能为空");
 				resList.add(resMap);
-				excepList.add(pslDto.getStoreCode() + "-" + pslDto.getSbarcode()
-						+ "--ActionCode不能为空");
+				excepList.add(
+						pslDto.getStoreCode() + "-" + pslDto.getSbarcode() + "--ActionCode不能为空");
 			}
 		}
 		// 写入异常表

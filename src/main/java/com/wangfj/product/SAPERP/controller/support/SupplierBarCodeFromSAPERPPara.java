@@ -31,8 +31,8 @@ public class SupplierBarCodeFromSAPERPPara {
 	private String SALEUNIT; /* 销售单位 */
 	@JsonProperty(value = "SALEAMOUNT")
 	private String SALEAMOUNT; /* 多包装的含量 */
-	@JsonProperty(value = "SALEPRICE")
-	private BigDecimal SALEPRICE; /* 售价 */
+	// @JsonProperty(value = "SALEPRICE")
+	// private BigDecimal SALEPRICE; /* 售价 */
 	@NotNull(message = "{PushSupplierBarCodeToMDERPDto.ACTIONCODE.isNotNull}")
 	@JsonProperty(value = "ACTION_CODE")
 	private String ACTION_CODE; /* 本条记录对应的操作 (A添加；U更新；D删除) */
@@ -113,13 +113,11 @@ public class SupplierBarCodeFromSAPERPPara {
 		SALEAMOUNT = sALEAMOUNT;
 	}
 
-	public BigDecimal getSALEPRICE() {
-		return SALEPRICE;
-	}
-
-	public void setSALEPRICE(BigDecimal sALEPRICE) {
-		SALEPRICE = sALEPRICE;
-	}
+	/*
+	 * public BigDecimal getSALEPRICE() { return SALEPRICE; }
+	 * 
+	 * public void setSALEPRICE(BigDecimal sALEPRICE) { SALEPRICE = sALEPRICE; }
+	 */
 
 	public String getACTION_CODE() {
 		return ACTION_CODE;
@@ -150,9 +148,9 @@ public class SupplierBarCodeFromSAPERPPara {
 		return "SupplierBarCodeFromSAPERPPara [STORECODE=" + STORECODE + ", MATNR=" + MATNR
 				+ ", LIFNR=" + LIFNR + ", COUNTERCODE=" + COUNTERCODE + ", SBARCODE=" + SBARCODE
 				+ ", SBARCODETYPE=" + SBARCODETYPE + ", SBARCODENAME=" + SBARCODENAME
-				+ ", SALEUNIT=" + SALEUNIT + ", SALEAMOUNT=" + SALEAMOUNT + ", SALEPRICE="
-				+ SALEPRICE + ", ACTION_CODE=" + ACTION_CODE + ", ACTION_DATE=" + ACTION_DATE
-				+ ", ACTION_PERSON=" + ACTION_PERSON + "]";
+				+ ", SALEUNIT=" + SALEUNIT + ", SALEAMOUNT=" + SALEAMOUNT + ", ACTION_CODE="
+				+ ACTION_CODE + ", ACTION_DATE=" + ACTION_DATE + ", ACTION_PERSON=" + ACTION_PERSON
+				+ "]";
 	}
 
 }
