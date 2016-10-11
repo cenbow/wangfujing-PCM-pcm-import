@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -138,10 +139,10 @@ public class PcmCategoryControllor extends BaseController {
 					throw new BleException(ErrorCode.DATA_OPER_ERROR.getErrorCode(),
 							ErrorCode.DATA_OPER_ERROR.getMemo());
 				} else {
-					parentSid = insert.getSid()+"";
+					parentSid = insert.getSid() + "";
 				}
 			} else {
-				parentSid = list1.get(0).getSid()+"";
+				parentSid = list1.get(0).getSid() + "";
 			}
 			// 添加分类
 			for (int i = 0; i < lists.size(); i++) {
@@ -286,7 +287,8 @@ public class PcmCategoryControllor extends BaseController {
 			exceptionLogdto.setDataContent(tongjicate.toString());
 			exceptionLogdto.setErrorMessage(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD
 					.getMemo());
-			exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD.getErrorCode());
+			exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.CATEGORY_UPLOAD
+					.getErrorCode());
 			exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
 			return ResultUtil.creComErrorResult(
 					ComErrorCodeConstants.ErrorCode.DATA_OPER_ERROR.getErrorCode(), s);
@@ -294,7 +296,7 @@ public class PcmCategoryControllor extends BaseController {
 		return ResultUtil.creComSucResult(s);
 
 	}
-	
+
 	/**
 	 * 电商管理分类批量上传
 	 * 
@@ -311,12 +313,13 @@ public class PcmCategoryControllor extends BaseController {
 	public Map<String, Object> uploadCategoryFromSAPERP(@RequestBody MqRequestDataListPara mqlist,
 			HttpServletRequest request) throws IllegalAccessException, InvocationTargetException {
 		String s = "";
+		List<Map<String, Object>> exlog = new ArrayList<Map<String, Object>>();
 		PcmAddCategoryDto catedto = new PcmAddCategoryDto();
 		JSONArray sq = JSONArray.fromObject(mqlist.getData());
 		List<CopyToCategoryPara> lists = new ArrayList<CopyToCategoryPara>();
-		
-		for(Object o : sq){
-			JSONObject json = (JSONObject)o;
+
+		for (Object o : sq) {
+			JSONObject json = (JSONObject) o;
 			CopyToCategoryPara obj = new CopyToCategoryPara();
 			obj.setStoreCode(json.getString("STORECODE"));
 			obj.setCODE(json.getString("CODE"));
@@ -331,7 +334,7 @@ public class PcmCategoryControllor extends BaseController {
 			obj.setActionPerson(json.getString("ACTIONPERSON"));
 			lists.add(obj);
 		}
-		
+
 		List<CopyToCategoryPara> publishList = new ArrayList<CopyToCategoryPara>();
 		if (lists.size() != 0) {// 数据不为空
 			// 查询是否存在此门店的根节点
@@ -413,15 +416,21 @@ public class PcmCategoryControllor extends BaseController {
 					}
 					// 如果上传失败，插入异常表
 				} catch (BleException e) {
-					PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
-					exceptionLogdto.setInterfaceName("findIndustryCategoryFromPCM");
-					exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_CATEGORY.getStatus());
-					exceptionLogdto.setErrorMessage("第" + (i + 1) + "条错误:" + e.getMessage());
-					exceptionLogdto.setErrorCode(e.getCode());
-					exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("getCode", e.getCode());
+					map.put("getMessage", catedto.getCategoryCode() + e.getMessage());
+					exlog.add(map);
 					// return ResultUtil.creComErrorResult(e.getCode(),
 					// e.getMessage());
 				}
+			}
+			if (exlog != null && exlog.size() > 0) {
+				PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
+				exceptionLogdto.setInterfaceName("uploadCategoryFromSAPERP");
+				exceptionLogdto.setExceptionType(StatusCode.EXCEPTION_CATEGORY.getStatus());
+				exceptionLogdto.setErrorMessage(exlog.toString());
+				exceptionLogdto.setErrorCode((String) exlog.get(0).get("getCode"));
+				exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
 			}
 			if (publishList.size() != 0) {
 				final JSONArray publish = JSONArray.fromObject(publishList);
