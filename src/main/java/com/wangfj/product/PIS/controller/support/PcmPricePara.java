@@ -1,5 +1,7 @@
 package com.wangfj.product.PIS.controller.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * 变价请求信息
  * 
@@ -7,6 +9,7 @@ package com.wangfj.product.PIS.controller.support;
  * @Author kongqf
  * @Create In 2015年7月10日
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PcmPricePara {
 	/**
 	 * 门店(中台的门店编码)
