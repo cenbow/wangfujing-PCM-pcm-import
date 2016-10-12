@@ -33,7 +33,7 @@ import java.util.Map;
 
 /**
  * 供应商主数据从门店ERP上传到Pcm
- * 
+ *
  * @Class Name PcmSupplyInfoController
  * @Author wangxuan
  * @Create In 2015-8-25
@@ -429,29 +429,13 @@ public class PcmSupplierInfoController extends BaseController {
 			}
 		}
 
-//		String action_DATE = tempPara.getACTION_DATE();
-//		if (StringUtils.isNotEmpty(tempPara.getACTION_DATE())) {
-//
-//			Date lastOptDate = DateUtil.formatDate(action_DATE, "yyyymmdd.HHMMSS");
-//			supplyInfo.setLastOptDate(lastOptDate);
-//
-//		}
-
 		if (StringUtils.isNotEmpty(tempPara.getACTION_PERSION())) {
 			supplyInfo.setLastOptUser(tempPara.getACTION_PERSION());
 		}
 
 		/* 供应商类型 默认都为门店供应商 */
 		supplyInfo.setSupplyType(0);
-		// String zflg = tempPara.getZFLG();
-		// if (StringUtils.isNotEmpty(zflg)) {
-		// if (zflg.equals("1")) {
-		// supplyInfo.setSupplyType(0);
-		// }
-		// if (zflg.equals("2")) {
-		// supplyInfo.setSupplyType(1);
-		// }
-		// }
+
 		return supplyInfo;
 	}
 
