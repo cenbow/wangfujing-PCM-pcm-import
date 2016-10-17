@@ -3,6 +3,7 @@ package com.wangfj.product.core.controller.supplier;
 import com.wangfj.core.constants.ComErrorCodeConstants;
 import com.wangfj.core.framework.base.controller.BaseController;
 import com.wangfj.core.framework.exception.BleException;
+import com.wangfj.core.utils.HttpUtil;
 import com.wangfj.core.utils.JsonUtil;
 import com.wangfj.core.utils.StringUtils;
 import com.wangfj.product.common.domain.vo.PcmExceptionLogDto;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +63,7 @@ public class PcmSupplyGroupController extends BaseController {
             RequestMethod.POST})
     @ResponseBody
     public String uploadPcmSupplyGroupFromSupplierERP(@RequestBody MqRequestDataListPara<PcmSupplyGroupPara> para,
-                                                      HttpServletRequest request) {
+                                                      final HttpServletRequest request) {
 
         final MqRequestDataListPara<PcmSupplyGroupPara> paraDest = new MqRequestDataListPara<PcmSupplyGroupPara>();
         try {
@@ -76,7 +78,11 @@ public class PcmSupplyGroupController extends BaseController {
             @Override
             public void run() {
                 List<PcmSupplyGroupPara> supplierParaList = paraDest.getData();
-                String callBackUrl = paraDest.getHeader().getCallbackUrl();
+                List<Map<String, Object>> callBackParaList = new ArrayList<Map<String, Object>>();
+                String callBackUrl = "";
+                if (paraDest.getHeader() != null) {
+                    callBackUrl = paraDest.getHeader().getCallbackUrl();
+                }
                 String requestMsg = "";
                 /* 将得到的参数赋到list中 */
                 for (int i = 0; i < supplierParaList.size(); i++) {
@@ -97,6 +103,8 @@ public class PcmSupplyGroupController extends BaseController {
                     try {
                         Map<String, Object> resultMap = supplyGroupService.uploadPcmSupplyGroupFromSupplierERP(supplyInfo, dtoMap);
                         String result = resultMap.get("result") + "";
+                        Map<String, Object> callBackMap = new HashMap<String, Object>();//回调参数
+                        callBackMap.put("SUPPLIERCODE", tempPara.getSUPPLIERCODE());
                         if (result.equals(Constants.PUBLIC_0 + "")) {
                             String dataContent = "供应商平台上传集团供应商:" + supplyInfo.toString() + "时失败;异常信息：操作数据库失败！";
                             PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
@@ -106,7 +114,12 @@ public class PcmSupplyGroupController extends BaseController {
                             exceptionLogdto.setErrorMessage(dataContent);
                             exceptionLogdto.setErrorCode(ComErrorCodeConstants.ErrorCode.SUPPLYINFO_NOT_EXISTENCE.getErrorCode());
                             exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
+
+                            callBackMap.put("success", "false");
+                        } else if (result.equals(Constants.PUBLIC_1 + "")) {
+                            callBackMap.put("success", "true");
                         }
+                        callBackParaList.add(callBackMap);
                     } catch (BleException ble) {
                         String dataContent = "供应商平台上传集团供应商:" + supplyInfo.toString() + "时失败;异常信息：" + ble.getMessage();
                         PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
@@ -118,6 +131,11 @@ public class PcmSupplyGroupController extends BaseController {
                         exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
                     }
                 }
+
+                String jsonString = JsonUtil.getJSONString(callBackParaList);
+                logger.info("集团供应商上传后开始调用回调接口，地址：" + callBackUrl + ",para:" + jsonString);
+                String doPost = HttpUtil.doPost(callBackUrl, jsonString);
+                logger.info("集团供应商上传后结束调用回调接口,return:" + doPost);
             }
         });
 
