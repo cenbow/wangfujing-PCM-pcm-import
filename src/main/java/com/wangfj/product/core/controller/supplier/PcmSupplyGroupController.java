@@ -96,15 +96,16 @@ public class PcmSupplyGroupController extends BaseController {
                         logger.info(e.getMessage());
                     }
 
-                    PcmSupplyGroup supplyInfo = transformParaToEntity(tempPara);
+                    PcmSupplyGroup supplyInfo = transformParaToEntity(tempPara);//上传参数
                     Map<String, Object> dtoMap = new HashMap<String, Object>();
                     dtoMap.put("actionCode", tempPara.getACTION_CODE());
 
+                    Map<String, Object> callBackMap = new HashMap<String, Object>();//回调参数
+                    callBackMap.put("SUPPLIERCODE", tempPara.getSUPPLIERCODE());
                     try {
                         Map<String, Object> resultMap = supplyGroupService.uploadPcmSupplyGroupFromSupplierERP(supplyInfo, dtoMap);
                         String result = resultMap.get("result") + "";
-                        Map<String, Object> callBackMap = new HashMap<String, Object>();//回调参数
-                        callBackMap.put("SUPPLIERCODE", tempPara.getSUPPLIERCODE());
+
                         if (result.equals(Constants.PUBLIC_0 + "")) {
                             String dataContent = "供应商平台上传集团供应商:" + supplyInfo.toString() + "时失败;异常信息：操作数据库失败！";
                             PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
@@ -116,10 +117,13 @@ public class PcmSupplyGroupController extends BaseController {
                             exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
 
                             callBackMap.put("success", "false");
+                            callBackMap.put("errCode", ComErrorCodeConstants.ErrorCode.DATA_OPER_ERROR.getErrorCode());
+                            callBackMap.put("errMsg", ComErrorCodeConstants.ErrorCode.DATA_OPER_ERROR.getMemo());
                         } else if (result.equals(Constants.PUBLIC_1 + "")) {
                             callBackMap.put("success", "true");
+                            callBackMap.put("errCode", "1");
+                            callBackMap.put("errMsg", "上传成功！");
                         }
-                        callBackParaList.add(callBackMap);
                     } catch (BleException ble) {
                         String dataContent = "供应商平台上传集团供应商:" + supplyInfo.toString() + "时失败;异常信息：" + ble.getMessage();
                         PcmExceptionLogDto exceptionLogdto = new PcmExceptionLogDto();
@@ -129,7 +133,12 @@ public class PcmSupplyGroupController extends BaseController {
                         exceptionLogdto.setErrorMessage(dataContent);
                         exceptionLogdto.setErrorCode(ble.getCode());
                         exceptionLogService.saveExceptionLogInfo(exceptionLogdto);
+
+                        callBackMap.put("success", "false");
+                        callBackMap.put("errCode", ble.getCode());
+                        callBackMap.put("errMsg", ble.getMessage());
                     }
+                    callBackParaList.add(callBackMap);
                 }
 
                 String jsonString = JsonUtil.getJSONString(callBackParaList);
