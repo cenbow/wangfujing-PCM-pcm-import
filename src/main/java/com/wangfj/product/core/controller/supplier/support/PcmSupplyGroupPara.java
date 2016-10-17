@@ -1,53 +1,77 @@
 package com.wangfj.product.core.controller.supplier.support;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by wangxuan on 2016-10-11 0011.
  * 集团供应商从供应商平台上传到PCM参数
  */
 public class PcmSupplyGroupPara {
 
+    @JsonProperty(value = "SUPPLIERCODE")
     private String SUPPLIERCODE;// 集团供应商编码（资质编号）
 
+    @JsonProperty(value = "SUPPLIERNAME")
     private String SUPPLIERNAME;// 供应商名称
 
+    @JsonProperty(value = "ZZPROPERTY")
     private String ZZPROPERTY;// 企业性质（转成文字信息上传）
 
+    @JsonProperty(value = "CONTACT_ADDR")
     private String CONTACT_ADDR;// 通讯地址
 
+    @JsonProperty(value = "REGISTERED_CAPITAL")
     private String REGISTERED_CAPITAL;// 注册资本
 
+    @JsonProperty(value = "ZZID_NAME")
     private String ZZID_NAME;// 法人代表
 
+    @JsonProperty(value = "ZZID_NUM")
     private String ZZID_NUM;// 法人身份证号
 
+    @JsonProperty(value = "CONTACT_NAME")
     private String CONTACT_NAME;// 联系人
 
+    @JsonProperty(value = "SMTP_ADDR")
     private String SMTP_ADDR;// e_mail（联系人邮箱）
 
+    @JsonProperty(value = "CONTACT_WAY")
     private String CONTACT_WAY;// 联系人联系方式（联系人电话）
 
+    @JsonProperty(value = "ZZCON_NUM")
     private String ZZCON_NUM;// 联系人身份证号
 
+    @JsonProperty(value = "FAX_NUMBER")
     private String FAX_NUMBER;// 传真（联系人传真）
 
+    @JsonProperty(value = "ZZBANK")
     private String ZZBANK;// 银行账号（开户账号）
 
+    @JsonProperty(value = "ZZNAME_BANK")
     private String ZZNAME_BANK;// 银行（开户行名称）
 
+    @JsonProperty(value = "ZZLICENSE")
     private String ZZLICENSE;// 营业执照号
 
+    @JsonProperty(value = "ZZORG")
     private String ZZORG;// 组织机构代码
 
+    @JsonProperty(value = "STCD1")
     private String STCD1;// 税号（税务登记证）
 
+    @JsonProperty(value = "TAXPAYER_CERTIFICATE")
     private String TAXPAYER_CERTIFICATE;//纳税人资格证
 
+    @JsonProperty(value = "ACCOUNT_NUMBER")
     private String ACCOUNT_NUMBER;//开户许可号
 
+    @JsonProperty(value = "ACTION_CODE")
     private String ACTION_CODE;// 操作动作(A/U/D)
 
+    @JsonProperty(value = "ACTION_DATE")
     private String ACTION_DATE;// 操作时间（yyyymmdd.HHMMSS+0800）
 
+    @JsonProperty(value = "ACTION_PERSION")
     private String ACTION_PERSION;// 操作人
 
     public String getSUPPLIERCODE() {

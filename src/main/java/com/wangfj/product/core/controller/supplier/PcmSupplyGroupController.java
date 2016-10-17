@@ -12,10 +12,8 @@ import com.wangfj.product.core.controller.supplier.support.PcmSupplyGroupPara;
 import com.wangfj.product.supplier.domain.entity.PcmSupplyGroup;
 import com.wangfj.product.supplier.service.intf.IPcmSupplyGroupService;
 import com.wangfj.util.Constants;
-import com.wangfj.util.mq.MqRequestDataPara;
+import com.wangfj.util.mq.MqRequestDataListPara;
 import com.wangfj.util.mq.MqUtil;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,33 +60,30 @@ public class PcmSupplyGroupController extends BaseController {
     @RequestMapping(value = "/uploadPcmSupplyGroupFromSupplierERP", method = {RequestMethod.GET,
             RequestMethod.POST})
     @ResponseBody
-    public String uploadPcmSupplyGroupFromSupplierERP(@RequestBody MqRequestDataPara para,
+    public String uploadPcmSupplyGroupFromSupplierERP(@RequestBody MqRequestDataListPara<PcmSupplyGroupPara> para,
                                                       HttpServletRequest request) {
 
-        final MqRequestDataPara paraDest = new MqRequestDataPara();
+        final MqRequestDataListPara<PcmSupplyGroupPara> paraDest = new MqRequestDataListPara<PcmSupplyGroupPara>();
         try {
             BeanUtils.copyProperties(paraDest, para);
         } catch (IllegalAccessException e1) {
-            e1.printStackTrace();
+            logger.info(e1.getMessage());
         } catch (InvocationTargetException e1) {
-            e1.printStackTrace();
+            logger.info(e1.getMessage());
         }
 
         taskExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                JSONObject jsonData = JSONObject.fromObject(paraDest.getData());
-                JSONArray jsonSupply = JSONArray.fromObject(jsonData.get("data"));
-                List<PcmSupplyGroupPara> supplyInfoParaList = JSONArray.toList(jsonSupply);
-
+                List<PcmSupplyGroupPara> supplierParaList = paraDest.getData();
                 String callBackUrl = paraDest.getHeader().getCallbackUrl();
                 String requestMsg = "";
                 /* 将得到的参数赋到list中 */
-                for (int i = 0; i < supplyInfoParaList.size(); i++) {
+                for (int i = 0; i < supplierParaList.size(); i++) {
 
                     PcmSupplyGroupPara tempPara = new PcmSupplyGroupPara();
                     try {
-                        BeanUtils.copyProperties(tempPara, supplyInfoParaList.get(i));
+                        BeanUtils.copyProperties(tempPara, supplierParaList.get(i));
                     } catch (IllegalAccessException e) {
                         logger.info(e.getMessage());
                     } catch (InvocationTargetException e) {
@@ -205,12 +200,12 @@ public class PcmSupplyGroupController extends BaseController {
 		/* 供应商类型 供应商平台上传的是集团供应商 */
         supplyInfo.setSupplyType(1);
 
-        if (StringUtils.isNotEmpty(tempPara.getTAXPAYER_CERTIFICATE())){
+        if (StringUtils.isNotEmpty(tempPara.getTAXPAYER_CERTIFICATE())) {
             supplyInfo.setTaxpayerCertificate(tempPara.getTAXPAYER_CERTIFICATE());
         }
 
-        if (StringUtils.isNotEmpty(tempPara.getACCOUNT_NUMBER())){
-           supplyInfo.setAccountNumber(tempPara.getACCOUNT_NUMBER());
+        if (StringUtils.isNotEmpty(tempPara.getACCOUNT_NUMBER())) {
+            supplyInfo.setAccountNumber(tempPara.getACCOUNT_NUMBER());
         }
 
         return supplyInfo;
