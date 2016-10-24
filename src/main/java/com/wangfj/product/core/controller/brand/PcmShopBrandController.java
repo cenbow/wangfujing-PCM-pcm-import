@@ -244,7 +244,7 @@ public class PcmShopBrandController extends BaseController {
     }
 
     /**
-     * 门店与门店品牌的信息上传(电商)
+     * 门店与门店品牌的信息上传(电商)-赛特
      *
      * @param para
      * @return String
