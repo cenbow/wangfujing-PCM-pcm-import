@@ -2,11 +2,13 @@ package com.wangfj.product.PAD.controller.support;
 
 import java.util.List;
 
+import com.wangfj.product.stocks.domain.vo.EdiStockDto;
+
 public class PcmEdiProductStockPara {
 	/**
 	 * 专柜商品编码
 	 */
-	private List<String> shoppeProSids;
+	private List<EdiStockDto> shoppeProSids;
 
 	/**
 	 * 渠道商品编码
@@ -18,11 +20,11 @@ public class PcmEdiProductStockPara {
 	 */
 	private Integer stockTypeSid;
 
-	public List<String> getShoppeProSids() {
+	public List<EdiStockDto> getShoppeProSids() {
 		return shoppeProSids;
 	}
 
-	public void setShoppeProSids(List<String> shoppeProSids) {
+	public void setShoppeProSids(List<EdiStockDto> shoppeProSids) {
 		this.shoppeProSids = shoppeProSids;
 	}
 

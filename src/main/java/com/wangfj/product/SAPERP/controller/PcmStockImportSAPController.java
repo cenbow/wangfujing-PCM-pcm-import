@@ -35,6 +35,7 @@ import com.wangfj.product.common.service.intf.IPcmExceptionLogService;
 import com.wangfj.product.constants.FlagType;
 import com.wangfj.product.constants.JcoSAPUtils;
 import com.wangfj.product.constants.StatusCodeConstants.StatusCode;
+import com.wangfj.product.stocks.domain.vo.EdiStockDto;
 import com.wangfj.product.stocks.domain.vo.PcmStockDto;
 import com.wangfj.product.stocks.service.intf.IPcmStockService;
 import com.wangfj.util.Constants;
@@ -134,13 +135,23 @@ public class PcmStockImportSAPController {
 							}
 						}
 					}
-					final List<String> proList = new ArrayList<String>();
+					final List<EdiStockDto> proList = new ArrayList<EdiStockDto>();
 					for (PcmStockDto pcmStockDto : list) {
 						try {
 							PcmStockDto dto = pcmStockService.findStockImportFromPcm(pcmStockDto);
 							if (dto.getSuccess() == null) {
 								dto.setSuccess(Constants.SUCCESS);
-								proList.add(dto.getShoppeProSid());
+								EdiStockDto ediStockDto = new EdiStockDto();
+								ediStockDto.setProSid(dto.getShoppeProSid());
+								if (pcmStockDto.getType().equals(Constants.PCMSTOCK_TYPE_ALL)) {// 全量
+									ediStockDto.setType(
+											StatusCode.EDITYPE_INCREMENTFROMSAP.getStatus());
+								} else if (pcmStockDto.getType()
+										.equals(Constants.PCMSTOCK_TYPE_DELTA)) {// 增量
+									ediStockDto.setType(StatusCode.EDITYPE_PULLFORMSAP.getStatus());
+								}
+								proList.add(ediStockDto);
+								// proList.add(dto.getShoppeProSid());
 								pcmStockService.updateImportStockCache(dto.getShoppeProSid(),
 										dto.getChannelSid(), dto.getStoreCode());
 							}
@@ -294,7 +305,7 @@ public class PcmStockImportSAPController {
 	 * @param proList
 	 *            void
 	 */
-	public void stockPushEdi(final List<String> proList) {
+	public void stockPushEdi(final List<EdiStockDto> proList) {
 		if (proList != null && proList.size() > 0) {
 			taskExecutor.execute(new Runnable() {
 				@Override
