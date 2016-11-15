@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import com.wangfj.product.organization.service.intf.IPcmStoreInfoService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -77,6 +78,9 @@ public class PcmCategoryControllor extends BaseController {
 
 	@Autowired
 	private ThreadPoolTaskExecutor taskExecutor;
+
+	@Autowired
+	private IPcmStoreInfoService storeInfoService;
 
 	/**
 	 * 管理分类批量上传
@@ -200,25 +204,31 @@ public class PcmCategoryControllor extends BaseController {
 				}
 			}
 			if (publishList.size() != 0) {
-				final JSONArray publish = JSONArray.fromObject(publishList);
-				// 上传成功后下发到促销
-				final String pushToeFuture = PropertyUtil
-						.getSystemUrl("category.synPushManageToEP");
-				taskExecutor.execute(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							logger.info("API,addManageCategoryTOEp.htm,synPushToERP,request:"
-									+ publish.toString());
-							String response = HttpUtil.doPost(pushToeFuture, publish.toString());
-							logger.info("API,addManageCategoryTOEp.htm,synPushToERP,response:"
-									+ response);
+				//判断是否下发给促销
+				CopyToCategoryPara copyToCategoryPara = publishList.get(0);
+				String storeCode = copyToCategoryPara.getStoreCode();
+				boolean publishFlag= storeInfoService.getPublish(storeCode);
+				if (publishFlag) {
+					final JSONArray publish = JSONArray.fromObject(publishList);
+					// 上传成功后下发到促销
+					final String pushToeFuture = PropertyUtil
+							.getSystemUrl("category.synPushManageToEP");
+					taskExecutor.execute(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								logger.info("API,addManageCategoryTOEp.htm,synPushToERP,request:"
+										+ publish.toString());
+								String response = HttpUtil.doPost(pushToeFuture, publish.toString());
+								logger.info("API,addManageCategoryTOEp.htm,synPushToERP,response:"
+										+ response);
 
-						} catch (Exception e) {
-							e.printStackTrace();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
-					}
-				});
+					});
+				}
 			}
 		}
 		return ResultUtil.creComSucResult(s);
