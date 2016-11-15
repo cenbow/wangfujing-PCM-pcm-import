@@ -8,9 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -42,9 +39,13 @@ import com.wangfj.product.maindata.domain.vo.ProSkuSpuPublishDto;
 import com.wangfj.product.maindata.domain.vo.UpdateProductInfoDto;
 import com.wangfj.product.maindata.service.intf.IPcmErpProductService;
 import com.wangfj.product.maindata.service.intf.IPcmShoppeProductService;
+import com.wangfj.product.organization.service.intf.IPcmStoreInfoService;
 import com.wangfj.util.mq.MqRequestDataPara;
 import com.wangfj.util.mq.MqUtil;
 import com.wangfj.util.mq.PublishDTO;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * ERP商品信息Controller——MQ
@@ -65,12 +66,15 @@ public class ErpProductController extends BaseController {
 	private IPcmExceptionLogService pcmExceptionLogService;
 	@Autowired
 	private ThreadPoolTaskExecutor taskExecutor;
+	@Autowired
+	private IPcmStoreInfoService storeInfoService;
 
 	List<PublishDTO> sidList = null;
 	List<PublishDTO> sidList2 = null;
 	List<PublishDTO> spuList = null;
 	List<PublishDTO> skuList = null;
 	List<PublishDTO> proList = null;
+	String storeCode = null;
 
 	@Autowired
 	private IPcmErpTestService erpTestService;
@@ -144,8 +148,9 @@ public class ErpProductController extends BaseController {
 										map.put("PcmProSearch", "1");
 										map.put("PcmEfuturePromotion", "1");// 促销
 										map.put("PcmSearcherOffline", "1");// 线下搜索
-										HttpUtil.doPost(PropertyUtil
-												.getSystemUrl("product.pushShoppeProduct"),
+										HttpUtil.doPost(
+												PropertyUtil
+														.getSystemUrl("product.pushShoppeProduct"),
 												JsonUtil.getJSONString(map));
 									}
 									System.out.println("下发促销" + JsonUtil.getJSONString(publish));
@@ -198,15 +203,17 @@ public class ErpProductController extends BaseController {
 						@Override
 						public void run() {
 							try {
-								HttpUtil.doPost(
-										PropertyUtil.getSystemUrl("product.pushErpProduct"),
-										JsonUtil.getJSONString(sidList));
+								if (storeInfoService.getPublish(storeCode)) {
+									HttpUtil.doPost(
+											PropertyUtil.getSystemUrl("product.pushErpProduct"),
+											JsonUtil.getJSONString(sidList));
+								}
 								HttpUtil.doPost(PropertyUtil.getSystemUrl("product.pushSearch"),
 										JsonUtil.getJSONString(sidList));
 							} catch (Exception e2) {
-								ThrowExcetpionUtil.splitExcetpion(new BleException(
-										ErrorCode.DOPOST_SYN_FAILED.getErrorCode(),
-										ErrorCode.DOPOST_SYN_FAILED.getMemo()));
+								ThrowExcetpionUtil.splitExcetpion(
+										new BleException(ErrorCode.DOPOST_SYN_FAILED.getErrorCode(),
+												ErrorCode.DOPOST_SYN_FAILED.getMemo()));
 							}
 						}
 					});
@@ -270,8 +277,9 @@ public class ErpProductController extends BaseController {
 										map.put("PcmProSearch", "1");
 										map.put("PcmEfuturePromotion", "1");// 促销
 										map.put("PcmSearcherOffline", "1");// 线下搜索
-										HttpUtil.doPost(PropertyUtil
-												.getSystemUrl("product.pushShoppeProduct"),
+										HttpUtil.doPost(
+												PropertyUtil
+														.getSystemUrl("product.pushShoppeProduct"),
 												JsonUtil.getJSONString(map));
 									}
 									System.out.println("下发促销" + JsonUtil.getJSONString(publish));
@@ -303,8 +311,8 @@ public class ErpProductController extends BaseController {
 							}
 						} catch (BleException e) {
 							if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
-								ThrowExcetpionUtil.splitExcetpion(new BleException(e.getCode(), e
-										.getMessage()));
+								ThrowExcetpionUtil.splitExcetpion(
+										new BleException(e.getCode(), e.getMessage()));
 							}
 							excepList.add(pcmDto.getStoreCode() + "-" + pcmDto.getProductCode()
 									+ "--导入失败,错误:" + e.toString());
@@ -459,8 +467,8 @@ public class ErpProductController extends BaseController {
 									}
 								} catch (BleException e) {
 									if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
-										ThrowExcetpionUtil.splitExcetpion(new BleException(e
-												.getCode(), e.getMessage()));
+										ThrowExcetpionUtil.splitExcetpion(
+												new BleException(e.getCode(), e.getMessage()));
 									}
 									excepMap.clear();
 									excepMap.put("专柜商品编码:" + entity.getShoppeProSid(),
@@ -481,8 +489,8 @@ public class ErpProductController extends BaseController {
 						}
 					} catch (BleException e) {
 						if (ErrorCodeConstants.ErrorCode.vaildErrorCode(e.getCode())) {
-							ThrowExcetpionUtil.splitExcetpion(new BleException(e.getCode(), e
-									.getMessage()));
+							ThrowExcetpionUtil
+									.splitExcetpion(new BleException(e.getCode(), e.getMessage()));
 						}
 						map.put("单据号:" + dto.getSEQNO() + ",行号:" + dto.getROWNO(), e.getMessage());
 						excepList.add(map);
@@ -500,8 +508,7 @@ public class ErpProductController extends BaseController {
 						public void run() {
 							try {
 								// 大码下发
-								HttpUtil.doPost(
-										PropertyUtil.getSystemUrl("product.pushErpProduct"),
+								HttpUtil.doPost(PropertyUtil.getSystemUrl("product.pushErpProduct"),
 										JsonUtil.getJSONString(sidList));
 								// 专柜商品下发
 								if (sidList2 != null && sidList2.size() != 0) {
@@ -510,9 +517,9 @@ public class ErpProductController extends BaseController {
 											JsonUtil.getJSONString(sidList2));
 								}
 							} catch (Exception e2) {
-								ThrowExcetpionUtil.splitExcetpion(new BleException(
-										ErrorCode.DOPOST_SYN_FAILED.getErrorCode(),
-										ErrorCode.DOPOST_SYN_FAILED.getMemo()));
+								ThrowExcetpionUtil.splitExcetpion(
+										new BleException(ErrorCode.DOPOST_SYN_FAILED.getErrorCode(),
+												ErrorCode.DOPOST_SYN_FAILED.getMemo()));
 							}
 						}
 					});
